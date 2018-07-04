@@ -1,10 +1,11 @@
 ## 移动端react选择器，支持拓展二级联动，三级联动
 
+forked from [https://github.com/springalskey/picker](https://github.com/springalskey/picker)
 
 ## How to use
 
 ```
-$ npm install spring-picker -S
+$ npm install spring-picker2 -S
 
 import 'spring-picker/lib/style.css';
 import { Picker, Popup } from 'spring-picker';
