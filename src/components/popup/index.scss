@@ -5,16 +5,11 @@
   background: #ccc;
   padding: 0 10px;
   line-height: 44px;
+  display: flex;
+  justify-content: space-between;
 
-  > span:first-child {
+  > span {
     display: inline-block;
-    float: left;
-    color: #007aff;
-  }
-
-  > span:last-child {
-    display: inline-block;
-    float: right;
     color: #007aff;
   }
 }
@@ -24,5 +19,6 @@
   width: 100%;
   overflow: hidden;
   -webkit-overflow-scrolling : touch;
+  display: flex;
 }
 
