@@ -14,17 +14,17 @@ class BaseModal extends React.Component {
   }
 
   componentDidUpdate () {
-    if (this.refs.modalOverlay && !this.refs.modalOverlay.onclick) {
+    if (this.modalOverlay && !this.modalOverlay.onclick) {
 
       // 点击阴影背景时cancel() popup
-      this.refs.modalOverlay.onclick = (e) => {
+      this.modalOverlay.onclick = (e) => {
         e.stopPropagation();
         this.props.onCancel && this.props.onCancel();
       }
 
       // 点击modal阻止默认行为
       // 原理：react event listener中无法阻止原生事件，所以用原生事件来替代react事件
-      this.refs.modal.onclick = (e) => e.stopPropagation();
+      this.modal.onclick = (e) => e.stopPropagation();
     }
   }
 
