@@ -24,7 +24,7 @@
   @include fadeIn;
 }
 
-.modal-transition-leave {
+.modal-transition-exit {
   @include fadeOut;
 }
 
@@ -32,6 +32,6 @@
   @include transitionBottomToUpFn('260',calc(100% - 260px));
 }
 
-.modal-transition-leave .modal {
+.modal-transition-exit .modal {
   @include transitionUpToBottomFn('260',calc(100% - 260px));
 }

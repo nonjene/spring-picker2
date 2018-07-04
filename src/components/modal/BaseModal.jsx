@@ -29,8 +29,8 @@ class BaseModal extends React.Component {
   }
 
   render () {
-    let modal = <span></span>;
-    if (this.props.visible) {
+    let modal/*  = <span/> */;
+    //if (this.props.visible) {
       modal = (
         <div className="modal-overlay" 
           ref={(modalOverlay) => { this.modalOverlay = modalOverlay;}}>
@@ -39,9 +39,9 @@ class BaseModal extends React.Component {
           </div>
         </div>
       );
-    }
+    //}
     return (
-      <CSSTransition classNames="modal-transition" timeout={240} in={true}>
+      <CSSTransition classNames="modal-transition" timeout={240} in={this.props.visible} unmountOnExit>
          {modal}
       </CSSTransition>
     );
