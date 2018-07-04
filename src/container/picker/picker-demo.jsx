@@ -12,30 +12,24 @@ export default class PickerDemo extends React.Component {
     this.state = {
       userPickerVisible: false,
       addressPickerVisible: false,
-      defaultValue: {name: 'Lincal', value: 5},
-      address: this.defaultAddress,
+      selectedValue: 5,
+      // address: this.defaultAddress,
     };
 
-    this.userData =  {
-      list: [
-        {name: '杜保坤', value: 0},
-        {name: '况宏瑞', value: 1},
-        {name: '盘维', value: 2},
-        {name: '杨泉', value: 3},
-        {name: '福娃', value: 4},
-        {name: 'Lincal', value: 5},
-        {name: '记忆残骸', value: 6},
-        {name: 'Raoh', value: 7},
-        {name: '铁甲飞龙', value: 8},
-        {name: '吴泽兵', value: 9},
-        {name: '邱福龙', value: 10},
-        {name: '小泥巴', value: 11},
-      ],
-      defaultValue: this.state.defaultValue,
-      displayValue (item) {
-        return item.name;
-      }
-    };
+    this.userData =  [
+      {name: '杜保坤', value: 0},
+      {name: '况宏瑞', value: 1},
+      {name: '盘维', value: 2},
+      {name: '杨泉', value: 3},
+      {name: '福娃', value: 4},
+      {name: 'Lincal', value: 5},
+      {name: '记忆残骸', value: 6},
+      {name: 'Raoh', value: 7},
+      {name: '铁甲飞龙', value: 8},
+      {name: '吴泽兵', value: 9},
+      {name: '邱福龙', value: 10},
+      {name: '小泥巴', value: 11},
+    ]
 
   }
 
@@ -45,10 +39,8 @@ export default class PickerDemo extends React.Component {
     this.setState({userPickerVisible: true});
   }
 
-  handleChangeUser (data) {
-    data = data || {}
-    this.userData.defaultValue = data;
-    this.setState({defaultValue: data});
+  handleChangeUser (value) {
+    this.setState({selectedValue: value});
   }
 
   closeUserPicker () {
@@ -56,42 +48,41 @@ export default class PickerDemo extends React.Component {
   }
 
   cancelUserPicker () {
-    this.userData.defaultValue = {};
     this.setState({
       userPickerVisible: false,
-      defaultValue: {}
+      selectedValue: ''
     });
   }
 
-  // 地址选择
-  showAddressPicker (e) {
-    e.nativeEvent.stopImmediatePropagation();
-    this.setState({addressPickerVisible: true});
-  }
+  // // 地址选择
+  // showAddressPicker (e) {
+  //   e.nativeEvent.stopImmediatePropagation();
+  //   this.setState({addressPickerVisible: true});
+  // }
 
-  handleChangeAddress (address) {
-    this.setState({address: address});
-  }
+  // handleChangeAddress (address) {
+  //   this.setState({address: address});
+  // }
 
-  closeAddressPicker (address) {
-    this.setState({
-      address: address,
-      addressPickerVisible: false,
-    });
-  }
+  // closeAddressPicker (address) {
+  //   this.setState({
+  //     address: address,
+  //     addressPickerVisible: false,
+  //   });
+  // }
 
-  cancelAddressPicker () {
-    this.setState({
-      address: this.defaultAddress,
-      addressPickerVisible: false,
-    });
-  }
+  // cancelAddressPicker () {
+  //   this.setState({
+  //     address: this.defaultAddress,
+  //     addressPickerVisible: false,
+  //   });
+  // }
 
   render() {
     return (
       <div className = "picker-demo">
         <div className="item">
-          { this.state.defaultValue.name }
+          { (this.userData.find(item=>item.value ===this.state.selectedValue)||{}).name }
         </div>
         <div className="single-picker">
           <Popup
@@ -101,17 +92,18 @@ export default class PickerDemo extends React.Component {
             <Picker
               onChange={this.handleChangeUser.bind(this)}
               data={this.userData}
+              selectedValue={this.state.selectedValue}
             />
           </Popup>
         </div>
 
-        <PickerAddress
+        {/* <PickerAddress
           defaultValue={this.state.address}
           onCancel={this.cancelAddressPicker.bind(this)}
           onConfirm={this.closeAddressPicker.bind(this)}
           visible={this.state.addressPickerVisible}
           onChange={this.handleChangeAddress.bind(this)}>
-        </PickerAddress>
+        </PickerAddress> */}
 
         <div className="button-wrap">
           <button
@@ -122,9 +114,9 @@ export default class PickerDemo extends React.Component {
           </button>
         </div>
 
-        <div className="item">
+        {/* <div className="item">
           { this.state.address }
-        </div>
+        </div> 
 
         <div className="button-wrap">
           <button
@@ -133,7 +125,7 @@ export default class PickerDemo extends React.Component {
             className="btn button-primary">
               选择地址
           </button>
-        </div>
+        </div> */}
 
       </div>
     )

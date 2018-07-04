@@ -1,20 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 
-const getIndex = (list, item) => {
+const getIndex = (list, value) => {
   if (list && list.length < 1) {
     return 0;
   }
-  let index1 = _.findIndex(list, item);
-  let index2 = list.indexOf(item);
-  let index = Math.max(index1, index2);
+  const index = list.findIndex((item)=>item.value === value);
   if (index < 0) {
-    throw new Error('list数组中不存在defaultValue');
+    console.warn(`指定的value:${value}不存在`);
+    return 0;
   }
   return index;
 }
+
+const existValue = (val)=>!!~'number,string'.indexOf(typeof val);
 
 class Picker extends React.Component {
   constructor(props) {
@@ -27,30 +27,28 @@ class Picker extends React.Component {
     this.itemHeight = 36;
     this.selectedIndex = this.getInitialIndex();
     this.state = {style: {}};
-    this._defaultValue = null;
+    
   }
 
   // 初始化获得selectedIndex
   getInitialIndex() {
     let index = getIndex(
-      this.props.data.list,
-      this.props.data.defaultValue
+      this.props.data,
+      this.props.selectedValue
     );
-    if (!this.props.data.defaultValue && this.props.data.list.length > 3) {
-      index = Math.floor(this.props.data.list.length / 2);
+    if (!existValue(this.props.selectedValue) && this.props.data.length > 3) {
+      index = Math.floor(this.props.data.length / 2);
     }
     return index;
   }
 
   componentWillReceiveProps(nextProps) {
-    const isEqual = _.isEqual(
-      nextProps.data.defaultValue,
-      this._defaultValue
-    );
+    const isEqual = nextProps.selectedValue === this.props.selectedValue;
+
     if (!isEqual) {
-      this._defaultValue = nextProps.data.defaultValue;
-      this.selectedIndex = this.getReceivePropsIndex(nextProps.data);
+      this.selectedIndex = getIndex(nextProps.data, nextProps.selectedValue);
       if (this.selectedIndex === 0) {
+        //这是干嘛的？
         this.setState({
           style: {
             transform: `translate3d(0px, ${this.itemHeight * 2}px, 0px)`
@@ -58,16 +56,6 @@ class Picker extends React.Component {
         })
       }
     }
-  }
-
-  getReceivePropsIndex (data) {
-    if (this._defaultValue) {
-      this.selectedIndex = getIndex(
-        data.list,
-        data.defaultValue
-      );
-    }
-    return this.selectedIndex;
   }
 
   getInitialStyle () {
@@ -82,7 +70,7 @@ class Picker extends React.Component {
 
   handleTouchStart (e) {
     e.preventDefault();
-    if (this.props.data.list.length <= 1) {
+    if (this.props.data.length <= 1) {
       return;
     }
     this.startY = e.nativeEvent.changedTouches[0].pageY;
@@ -90,7 +78,7 @@ class Picker extends React.Component {
 
   handleTouchEnd (e) {
     e.preventDefault();
-    if (this.props.data.list.length <= 1) {
+    if (this.props.data.length <= 1) {
       return;
     }
     this.endY = e.nativeEvent.changedTouches[0].pageY;
@@ -103,7 +91,7 @@ class Picker extends React.Component {
     // 正数y最大值
     const max1 = 2 * this.itemHeight;
     // 负数y最小值
-    const max2 = (this.props.data.list.length - 3) * this.itemHeight;
+    const max2 = (this.props.data.length - 3) * this.itemHeight;
 
     if (this.currentY > max1) {
       this.currentY = max1;
@@ -129,7 +117,7 @@ class Picker extends React.Component {
 
   handleTouchMove (e) {
     e.preventDefault();
-    if (this.props.data.list.length <= 1) {
+    if (this.props.data.length <= 1) {
       return;
     }
     const pageY = e.nativeEvent.changedTouches[0].pageY;
@@ -152,23 +140,23 @@ class Picker extends React.Component {
 
   // set选中值
   setSelectedValue (index) {
-    const length = this.props.data.list.length;
+    const length = this.props.data.length;
     if (length === 0) {
       this.callback(null);
       return;
     }
-    if (index < 0 || index > length -1) {
-      throw new Error('滑动取值索引数值出现错误'+ index);
-    }
-    const value = this.props.data.list[index];
+    if (index < 0 ) index = 0;
+    if(index > length -1) index = length -1;
+
+    const item = this.props.data[index];
     this.selectedIndex = index;
 
-    this.callback(value)
+    this.callback(item)
   }
 
   // 回调
-  callback (value) {
-    this.props.onChange(value);
+  callback (item) {
+    this.props.onChange(item.value, item.name);
   }
 
   getSelectedClass (index) {
@@ -198,8 +186,8 @@ class Picker extends React.Component {
             onTouchMove={this.handleTouchMove.bind(this)}
             onTouchEnd = {this.handleTouchEnd.bind(this)}>
             {
-              this.props.data.list.map((data, index) => {
-                const displayValue = this.props.data.displayValue(data);
+              this.props.data.map((item, index) => {
+                const displayValue = item.name;
                 return <div key={index}
                   className={ 'ui-picker-item ' + this.getSelectedClass(index)}>
                   {displayValue}
@@ -215,9 +203,11 @@ class Picker extends React.Component {
 
 Picker.propTypes = {
   // 数据源
-  data: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
+  // 选中的value
+  selectedValue: PropTypes.any,
   // 当停止滑动选中立即回调onchange方法
-  onChange: PropTypes.func.isRequired,
+  onChange: PropTypes.func,
 };
 
 export default Picker;
