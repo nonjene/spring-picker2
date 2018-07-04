@@ -1,6 +1,6 @@
 {
   "name": "spring-picker2",
-  "version": "2.0.1",
+  "version": "2.1.1",
   "description": "react picker",
   "scripts": {
     "start": "cross-env NODE_ENV=dev webpack-dev-server --inline --progress",
@@ -15,10 +15,10 @@
       "es2015"
     ]
   },
-  "homepage": "https://github.com/springalskey/picker.git",
+  "homepage": "https://github.com/nonjene/picker.git",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/springalskey/picker.git"
+    "url": "git+https://github.com/nonjene/picker.git"
   },
   "license": "MIT",
   "dependencies": {},
@@ -56,12 +56,16 @@
   "peerDependencies": {
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
-    "react-transition-group": "^2.2.1",
+    "react-transition-group": "^2.2.1"
   },
   "bugs": {
-    "url": "https://github.com/springalskey/picker/issues"
+    "url": "https://github.com/nonjene/picker/issues"
   },
   "main": "lib/index.js",
   "style": "lib/style.css",
-  "author": "springalskey"
+  "author": "springalskey",
+  "contributors":[
+    "springalskey",
+    "nonjene"
+  ]
 }

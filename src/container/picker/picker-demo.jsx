@@ -1,6 +1,6 @@
 import React from 'react';
-import { Picker, Popup} from '../../components';
-import { PickerAddress } from '../../components-ext';
+import { Picker, Popup, PopupPicker} from '../../components';
+// import { PickerAddress } from '../../components-ext';
 import './index.scss';
 
 export default class PickerDemo extends React.Component {
@@ -11,6 +11,7 @@ export default class PickerDemo extends React.Component {
     this.defaultAddress = ['湖南省','长沙市','开福区'];
     this.state = {
       userPickerVisible: false,
+      userPickerVisible2: false,
       addressPickerVisible: false,
       selectedValue: 5,
       // address: this.defaultAddress,
@@ -37,6 +38,11 @@ export default class PickerDemo extends React.Component {
   showUserPicker (e) {
     e.nativeEvent.stopImmediatePropagation();
     this.setState({userPickerVisible: true});
+  }
+  // user选择
+  showUserPicker2 (e) {
+    e.nativeEvent.stopImmediatePropagation();
+    this.setState({userPickerVisible2: true});
   }
 
   handleChangeUser (value) {
@@ -95,6 +101,17 @@ export default class PickerDemo extends React.Component {
               selectedValue={this.state.selectedValue}
             />
           </Popup>
+          <PopupPicker 
+            data={this.userData} 
+            selectedValue={this.state.selectedValue}
+            visible={this.state.userPickerVisible2}
+            liveUpdate={false}
+            onCancel={()=>this.setState({ userPickerVisible2: false })}
+            onSelect={selectedValue=>this.setState({
+              userPickerVisible2:false,
+              selectedValue
+            })}
+          />
         </div>
 
         {/* <PickerAddress
@@ -111,6 +128,12 @@ export default class PickerDemo extends React.Component {
             onClick={this.showUserPicker.bind(this)}
             className="btn button-primary">
               单向选择
+          </button>
+          <button
+            type="button"
+            onClick={this.showUserPicker2.bind(this)}
+            className="btn button-primary">
+              单向选择2
           </button>
         </div>
 
