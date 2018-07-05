@@ -134,7 +134,7 @@ export default class PickerDemo extends React.Component {
               userPickerVisible2:false,
               selectedValue
             })}
-            onchanging={(selectedValue, key, value, name)=>{
+            onChanging={(selectedValue, key, value, name)=>{
               console.log(selectedValue, key, value, name)
             }}
           />
