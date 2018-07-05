@@ -6,11 +6,18 @@ import Popup from '../popup';
 
 const propTypes = {
   visible: PropTypes.bool.isRequired,
+  // 用户点确认
   onSelect: PropTypes.func.isRequired,
+  // 点取消
   onCancel: PropTypes.func.isRequired,
+  // 
   data: PropTypes.array.isRequired,
+  // 默认选中
   selectedValue: PropTypes.any,
-  liveUpdate: PropTypes.bool
+  // 是否在选择过程即时传递数据
+  liveUpdate: PropTypes.bool,
+   // 正在滑动选择
+   onChanging: PropTypes.func,
 };
 const defaultProps = {
   data: [],
@@ -63,6 +70,7 @@ class PopupPicker extends React.Component {
 
   handleChange(value, name) {
     this.setState({ activeValue: value }, () => {
+      this.props.onChanging && this.props.onChanging(value, name);
       if (this.props.liveUpdate) {
         this.handleSelect();
       }
