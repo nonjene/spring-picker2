@@ -63,10 +63,10 @@ class PopupPicker extends React.Component {
     this.state = {
       activeValue: this.props.selectedValue
     };
-    this._oriValue = this.props.selectedValue;
+    this._activeValue = this.props.selectedValue;
+    this._oriValue = this._activeValue;
   }
   componentWillReceiveProps(nextProps) {
-    
     const isSelectValueChanged = !deepEqual(nextProps.selectedValue, this._oriValue);
     // 更新原始选择，
     if (isSelectValueChanged) {
@@ -104,10 +104,12 @@ class PopupPicker extends React.Component {
   }
 
   handleChange(key, value, name) {
-    this.setState({ activeValue: {
-      ...this.state.activeValue,
+    console.log('change:',key, value, name)
+    this._activeValue = {
+      ...this._activeValue,
       [key]: value
-    } }, () => {
+    };
+    this.setState({ activeValue: this._activeValue }, () => {
       this.props.onChanging && this.props.onChanging(this.state.activeValue, key, value, name);
       if (this.props.liveUpdate) {
         this.handleSelect();
@@ -123,16 +125,15 @@ class PopupPicker extends React.Component {
   }
 
   render() {
-    console.log(this.state.activeValue)
     return (
       <Popup
         onCancel={this.handleCancel.bind(this)}
         onConfirm={this.handleSelect.bind(this)}
         visible={this.props.visible}
       >
-        {Object.keys(this.props.data).map((name, key) => (
+        {Object.keys(this.props.data).map(name => (
           <Picker
-            key={key}
+            key={name}
             onChange={this.handleChange.bind(this, name)}
             data={this.props.data[name]}
             selectedValue={this.state.activeValue[name]}
