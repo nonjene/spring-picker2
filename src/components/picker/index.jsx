@@ -9,7 +9,6 @@ const getIndex = (list, value) => {
   const index = list.findIndex((item)=>item.value === value);
   if (index < 0) {
     console.warn(`指定的value:${value}不存在`);
-    return 0;
   }
   return index;
 }
@@ -32,12 +31,26 @@ class Picker extends React.Component {
 
   // 初始化获得selectedIndex
   getInitialIndex() {
-    let index = getIndex(
-      this.props.data,
-      this.props.selectedValue
-    );
-    if (!existValue(this.props.selectedValue) && this.props.data.length > 3) {
-      index = Math.floor(this.props.data.length / 2);
+    let index;
+    if (!existValue(this.props.selectedValue)) {
+      if(this.props.data.length > 3){
+        index = Math.floor(this.props.data.length / 2);
+        
+      }else{
+        index = 0;
+      }
+      //没指定value，选了index后定义对应的value
+      this.setSelectedValue(index)
+    }else{
+      index = getIndex(
+        this.props.data,
+        this.props.selectedValue
+      );
+      //制定value不存在
+      if(index < 0){
+        index = 0;
+        this.setSelectedValue(index);
+      }
     }
     return index;
   }
@@ -142,7 +155,7 @@ class Picker extends React.Component {
   setSelectedValue (index) {
     const length = this.props.data.length;
     if (length === 0) {
-      this.callback(null);
+      this.callback({});
       return;
     }
     if (index < 0 ) index = 0;
@@ -167,7 +180,7 @@ class Picker extends React.Component {
   }
 
   componentDidMount () {
-    this.setSelectedValue(this.selectedIndex);
+    //this.setSelectedValue(this.selectedIndex, 'slient');
   }
 
   handleWrapperStart (e) {
