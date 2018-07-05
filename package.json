@@ -1,6 +1,6 @@
 {
   "name": "spring-picker2",
-  "version": "2.1.1",
+  "version": "2.2.1",
   "description": "react picker",
   "scripts": {
     "start": "cross-env NODE_ENV=dev webpack-dev-server --inline --progress",
@@ -21,7 +21,9 @@
     "url": "git+https://github.com/nonjene/picker.git"
   },
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "fast-deep-equal": "^2.0.1"
+  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
@@ -64,7 +66,7 @@
   "main": "lib/index.js",
   "style": "lib/style.css",
   "author": "springalskey",
-  "contributors":[
+  "contributors": [
     "springalskey",
     "nonjene"
   ]

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import Picker from '../picker';
 import Popup from '../popup';
+const deepEqual = require('fast-deep-equal');
 
 const propTypes = {
   visible: PropTypes.bool.isRequired,
@@ -10,24 +11,45 @@ const propTypes = {
   onSelect: PropTypes.func.isRequired,
   // 点取消
   onCancel: PropTypes.func.isRequired,
-  // 
-  data: PropTypes.array.isRequired,
-  // 默认选中
-  selectedValue: PropTypes.any,
+  /* 例子(键值命名随意)：
+    {
+      "year": [
+        {name:"2018年",value:"2018"},
+        {name:"2019年",value:"2019"},
+      ],
+      "month":[
+        {name:"1月", value:"01"},
+        {name:"2月", value:"02"},
+      ]
+    }
+  */
+  data: PropTypes.object.isRequired,
+  
+  /* 默认选中的value 例子：
+    {
+      "year": "2019",
+      "month":"02"
+    }
+  */
+  selectedValue: PropTypes.object,
   // 是否在选择过程即时传递数据
   liveUpdate: PropTypes.bool,
-   // 正在滑动选择
-   onChanging: PropTypes.func,
+  // 正在滑动选择
+  onChanging: PropTypes.func
 };
 const defaultProps = {
-  data: [],
+  data: {},
   visible: false,
-  selectedValue: null,
-  liveUpdate: false,
+  selectedValue: {},
+  liveUpdate: false
+};
+const getName = (bundleData, values) =>{
+  return Object.keys(bundleData).reduce((o,name)=>{
+    o[name] = (bundleData[name].find(item => item.value === values[name]) || {}).name;
+    return o;
+  }, {});
 }
-const getName = (data, value) =>
-  (data.find(item => item.value === value) || {}).name;
-
+  
 
 /**
  * @功能：
@@ -39,26 +61,39 @@ class PopupPicker extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeValue: props.selectedValue
+      activeValue: this.props.selectedValue
     };
-    this.updOriVal(this.state.activeValue);
+    this._oriValue = this.props.selectedValue;
   }
   componentWillReceiveProps(nextProps) {
+    
+    const isSelectValueChanged = !deepEqual(nextProps.selectedValue, this._oriValue);
     // 更新原始选择，
-    if (nextProps.selectedValue !== this._oriValue) {
-      // 在当前用户没正在选择中的情况下，才更新state。
-      if(this._oriValue === this.state.activeValue){
-          this.setState({
-            activeValue: nextProps.selectedValue
-          })
-      }
-
-      this.updOriVal(nextProps.selectedValue);
+    if (isSelectValueChanged) {
+      this.syncVal(nextProps.selectedValue);
       
+    }else{
+      //选择没变化，但选项变化
+      let newer = false;
+      const activeValue = {...this.state.activeValue};
+      Object.keys(nextProps.data).forEach(name=>{
+        // 选项变化了
+        if(!deepEqual(nextProps.data[name], this.props.data[name])){
+          // 重置选项
+          const val = (nextProps.data[name][0] || {}).value;
+          activeVal[name] = val;
+          _oriValue[name] = val;
+          newer = true;
+        }
+      });
+      newer && this.setState({ activeValue });
     }
+    
+
   }
-  updOriVal(val) {
-    this._oriValue = val;
+  syncVal(val){
+    this._oriValue = val; // _oriValue 用于用户点取消后, 重置state.activeValue
+    this.setState({ activeValue: val });
   }
   handleSelect() {
     this.props.onSelect &&
@@ -68,9 +103,12 @@ class PopupPicker extends React.Component {
       );
   }
 
-  handleChange(value, name) {
-    this.setState({ activeValue: value }, () => {
-      this.props.onChanging && this.props.onChanging(value, name);
+  handleChange(key, value, name) {
+    this.setState({ activeValue: {
+      ...this.state.activeValue,
+      [key]: value
+    } }, () => {
+      this.props.onChanging && this.props.onChanging(this.state.activeValue, key, value, name);
       if (this.props.liveUpdate) {
         this.handleSelect();
       }
@@ -85,22 +123,26 @@ class PopupPicker extends React.Component {
   }
 
   render() {
+    console.log(this.state.activeValue)
     return (
       <Popup
         onCancel={this.handleCancel.bind(this)}
         onConfirm={this.handleSelect.bind(this)}
         visible={this.props.visible}
       >
-        <Picker
-          onChange={this.handleChange.bind(this)}
-          data={this.props.data}
-          selectedValue={this.state.activeValue}
-        />
+        {Object.keys(this.props.data).map((name, key) => (
+          <Picker
+            key={key}
+            onChange={this.handleChange.bind(this, name)}
+            data={this.props.data[name]}
+            selectedValue={this.state.activeValue[name]}
+          />
+        ))}
       </Popup>
     );
   }
 }
-
+PopupPicker.getName = getName;
 PopupPicker.propTypes = propTypes;
 PopupPicker.defaultProps = defaultProps;
 
