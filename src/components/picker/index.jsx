@@ -40,7 +40,7 @@ class Picker extends React.Component {
         index = 0;
       }
       //没指定value，选了index后定义对应的value
-      this.setSelectedValue(index)
+      this.setSelectedValue(index, 'init')
     }else{
       index = getIndex(
         this.props.data,
@@ -49,7 +49,7 @@ class Picker extends React.Component {
       //制定value不存在
       if(index < 0){
         index = 0;
-        this.setSelectedValue(index);
+        this.setSelectedValue(index,'init');
       }
     }
     return index;
@@ -152,7 +152,7 @@ class Picker extends React.Component {
   }
 
   // set选中值
-  setSelectedValue (index) {
+  setSelectedValue (index, type) {
     const length = this.props.data.length;
     if (length === 0) {
       this.callback({});
@@ -164,12 +164,16 @@ class Picker extends React.Component {
     const item = this.props.data[index];
     this.selectedIndex = index;
 
-    this.callback(item)
+    this.callback(item, type)
   }
 
   // 回调
-  callback (item) {
-    this.props.onChange(item.value, item.name);
+  callback (item, type) {
+    if(type==='init'){
+        this._triggerChangeWhenMount = item;
+    }else{
+      this.props.onChange(item.value, item.name);
+    }
   }
 
   getSelectedClass (index) {
@@ -180,6 +184,10 @@ class Picker extends React.Component {
   }
 
   componentDidMount () {
+    if(this._triggerChangeWhenMount){
+        this.callback(this._triggerChangeWhenMount);
+        this._triggerChangeWhenMount = null;
+    }
     //this.setSelectedValue(this.selectedIndex, 'slient');
   }
 
