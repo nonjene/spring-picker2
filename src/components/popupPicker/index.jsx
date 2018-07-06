@@ -104,7 +104,7 @@ class PopupPicker extends React.Component {
   }
 
   handleChange(key, value, name) {
-    console.log('change:',key, value, name)
+    //console.log('change:',key, value, name)
     this._activeValue = {
       ...this._activeValue,
       [key]: value
