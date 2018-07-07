@@ -14,7 +14,9 @@ const getIndex = (list, value) => {
 }
 
 const existValue = (val)=>!!~'number,string'.indexOf(typeof val);
-
+const defaultProps = {
+  viewCount: 7
+}
 class Picker extends React.Component {
   constructor(props) {
     super();
@@ -26,7 +28,8 @@ class Picker extends React.Component {
     this.itemHeight = 36;
     this.selectedIndex = this.getInitialIndex();
     this.state = {style: {}};
-    
+    this.viewCount = props.viewCount % 2 ? props.viewCount : props.viewCount + 1;//要奇数
+    this.halfCount = this.viewCount / 2 | 0;
   }
 
   // 初始化获得selectedIndex
@@ -64,7 +67,7 @@ class Picker extends React.Component {
         //这是干嘛的？
         this.setState({
           style: {
-            transform: `translate3d(0px, ${this.itemHeight * 2}px, 0px)`
+            transform: `translate3d(0px, ${this.itemHeight * this.halfCount}px, 0px)`
           }
         })
       }
@@ -73,10 +76,10 @@ class Picker extends React.Component {
 
   getInitialStyle () {
     this.currentY = 0;
-    if (this.selectedIndex > 2) {
-      this.currentY = - (this.selectedIndex - 2) * this.itemHeight;
+    if (this.selectedIndex > this.halfCount) {
+      this.currentY = - (this.selectedIndex - this.halfCount) * this.itemHeight;
     } else {
-      this.currentY = (2 - this.selectedIndex) * this.itemHeight;
+      this.currentY = (this.halfCount - this.selectedIndex) * this.itemHeight;
     }
     return `translate3d(0px, ${ this.currentY }px, 0px)`;
   }
@@ -102,9 +105,9 @@ class Picker extends React.Component {
     this.currentY += (v - value);
 
     // 正数y最大值
-    const max1 = 2 * this.itemHeight;
+    const max1 = this.halfCount * this.itemHeight;
     // 负数y最小值
-    const max2 = (this.props.data.length - 3) * this.itemHeight;
+    const max2 = (this.props.data.length - this.halfCount - 1) * this.itemHeight;
 
     if (this.currentY > max1) {
       this.currentY = max1;
@@ -147,7 +150,7 @@ class Picker extends React.Component {
   // 计算list数组索引
   countListIndex (pageY) {
     let n = pageY / this.itemHeight;
-    n = n > 0 ? 2 - n : Math.abs(n) + 2;
+    n = n > 0 ? this.halfCount - n : Math.abs(n) + this.halfCount;
     this.setSelectedValue(n);
   }
 
@@ -216,12 +219,13 @@ class Picker extends React.Component {
               })
             }
           </div>
-          <div className="ui-picker-center"></div>
+          <div className="ui-picker-deco" />
+          <div className="ui-picker-center"/>
       </div>
     )
   }
 }
-
+Picker.defaultProps = defaultProps;
 Picker.propTypes = {
   // 数据源
   data: PropTypes.array.isRequired,
@@ -229,6 +233,7 @@ Picker.propTypes = {
   selectedValue: PropTypes.any,
   // 当停止滑动选中立即回调onchange方法
   onChange: PropTypes.func,
+  viewCount: PropTypes.number
 };
 
 export default Picker;
