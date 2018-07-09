@@ -11,9 +11,7 @@ $itemHeight: 36px;
 
   .ui-picker {
     width: 100%;
-    transition: transform;
-    transition-duration: .3s;
-    transition-timing-function: ease-out;
+    transition: transform .3s ease-out;
   }
 
   .ui-picker-item {

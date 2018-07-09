@@ -17,6 +17,8 @@ const existValue = (val)=>!!~'number,string'.indexOf(typeof val);
 const defaultProps = {
   viewCount: 7
 }
+
+
 class Picker extends React.Component {
   constructor(props) {
     super();
@@ -65,11 +67,7 @@ class Picker extends React.Component {
       this.selectedIndex = getIndex(nextProps.data, nextProps.selectedValue);
       if (this.selectedIndex === 0) {
         //这是干嘛的？
-        this.setState({
-          style: {
-            transform: `translate3d(0px, ${this.itemHeight * this.halfCount}px, 0px)`
-          }
-        })
+        this.setTransForm(this.itemHeight * this.halfCount);
       }
     }
   }
@@ -81,7 +79,21 @@ class Picker extends React.Component {
     } else {
       this.currentY = (this.halfCount - this.selectedIndex) * this.itemHeight;
     }
-    return `translate3d(0px, ${ this.currentY }px, 0px)`;
+    return this.currentY;
+  }
+  setTransForm(y, type){
+    //todo: 改为scroll
+    if(!this.dom) return;
+    const val = `translate3d(0px, ${y}px, 0px)`;
+    (window.requestAnimationFrame || window.webkitRequestAnimationFrame)(()=>{
+      this.dom.style.webkitTransform = val;
+      this.dom.style.transform = val;
+      if(type==='end'){
+        this.dom.style.transition = '';
+      }else{
+        this.dom.style.transition = 'none';
+      }
+    })
   }
 
   handleTouchStart (e) {
@@ -124,11 +136,7 @@ class Picker extends React.Component {
 
     this.countListIndex(this.currentY);
 
-    this.setState({
-      style: {
-        transform: `translate3d(0px, ${ this.currentY }px, 0px)`
-      }
-    });
+    this.setTransForm(this.currentY, 'end');
   }
 
   handleTouchMove (e) {
@@ -139,12 +147,7 @@ class Picker extends React.Component {
     const pageY = e.nativeEvent.changedTouches[0].pageY;
     let value = parseInt(pageY - this.startY);
     const y = this.currentY + value;
-    let style = `translate3d(0px, ${ y }px, 0px)`;
-    this.setState({
-      style: {
-        transform: style
-      }
-    });
+    this.setTransForm(y);
   }
 
   // 计算list数组索引
@@ -191,7 +194,7 @@ class Picker extends React.Component {
         this.callback(this._triggerChangeWhenMount);
         this._triggerChangeWhenMount = null;
     }
-    //this.setSelectedValue(this.selectedIndex, 'slient');
+    this.setTransForm(this.getInitialStyle());
   }
 
   handleWrapperStart (e) {
@@ -199,13 +202,13 @@ class Picker extends React.Component {
   }
 
   render () {
-    const style = {
-      transform: this.getInitialStyle()
-    }
+    // const style = {
+    //   transform: this.getInitialStyle()
+    // }
     return (
       <div className="ui-picker-wrapper" onTouchStart={this.handleWrapperStart.bind(this)}>
           <div className="ui-picker"
-            style = {this.state.style.transform ? this.state.style : style}
+            ref={dom=>this.dom = dom}
             onTouchStart={this.handleTouchStart.bind(this)}
             onTouchMove={this.handleTouchMove.bind(this)}
             onTouchEnd = {this.handleTouchEnd.bind(this)}>
