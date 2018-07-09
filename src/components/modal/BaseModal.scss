@@ -9,7 +9,7 @@
 
   .modal {
     position: fixed;
-    //top: calc(100% - 260px);
+    top: calc(100% - 296px);
     left: 0;
     bottom: 0;
     right: 0;
@@ -29,9 +29,9 @@
 }
 
 .modal-transition-enter .modal {
-  @include transitionBottomToUpFn('260',calc(100% - 260px));
+  @include transitionBottomToUpFn('260',calc(100% - 296px));
 }
 
 .modal-transition-exit .modal {
-  @include transitionUpToBottomFn('260',calc(100% - 260px));
+  @include transitionUpToBottomFn('260',calc(100% - 296px));
 }
