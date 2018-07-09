@@ -23,6 +23,7 @@ $itemHeight: 36px;
     white-space:nowrap;
     text-overflow:ellipsis;
     overflow:hidden;
+    transition: transform-origin .2s ease;
   }
 
   .ui-picker-item-selected {

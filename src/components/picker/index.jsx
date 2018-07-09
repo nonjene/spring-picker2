@@ -76,14 +76,14 @@ class Picker extends React.Component {
     }
   }
 
-  getInitialStyle () {
-    this.currentY = 0;
-    if (this.selectedIndex > this.halfCount) {
-      this.currentY = - (this.selectedIndex - this.halfCount) * this.itemHeight;
+  getStyle (selectedIndex) {
+    let y;
+    if (selectedIndex > this.halfCount) {
+      y = - (selectedIndex - this.halfCount) * this.itemHeight;
     } else {
-      this.currentY = (this.halfCount - this.selectedIndex) * this.itemHeight;
+      y = (this.halfCount - selectedIndex) * this.itemHeight;
     }
-    return this.currentY;
+    return y;
   }
   setTransForm(y, type){
     if(!this.dom) return;
@@ -103,6 +103,29 @@ class Picker extends React.Component {
     }else{
       reqAF(run);
     }
+
+    // item scale
+    const n = this.countListIndex(y)|0;
+    //console.log(n)
+    for(let i = n - this.halfCount; i<n+this.halfCount+1; i++){
+      if(typeof this.dom.childNodes[i] === 'undefined') continue;
+
+      const oriPos = this.getStyle(i);
+      const scale = 1 - Math.abs(oriPos-y)  / 8 / this.itemHeight;
+      console.log(scale);
+      //let origin;
+      //let transY = this.itemHeight * (1 - Math.pow(scale, Math.abs(i-n)));
+      // if(i<=n){
+      //   origin = `center ${transY*3}px`;
+      // }else{
+      //   origin = `center ${-transY}px`;
+      //   //transY = -transY;
+      // }
+
+      //this.dom.childNodes[i].style.transform = `scale(${scale}) translate3d(0,${transY}px,0)`;
+      this.dom.childNodes[i].style.transform = `scale(${scale})`;
+      this.dom.childNodes[i].style.transformOrigin = i<=n ? 'bottom' : 'top';
+    }console.log('end')
   }
 
   stopEase(idPointer){
@@ -240,7 +263,8 @@ class Picker extends React.Component {
 
   // 滚动完后
   handleTransEnd(){
-    this.countListIndex(this.currentY);
+    const n = this.countListIndex(this.currentY);
+    this.setSelectedValue(n);
     this.setTransForm(this.currentY, 'end');
   }
   handleTouchStart (e) {
@@ -296,7 +320,7 @@ class Picker extends React.Component {
   countListIndex (pageY) {
     let n = pageY / this.itemHeight;
     n = n > 0 ? this.halfCount - n : Math.abs(n) + this.halfCount;
-    this.setSelectedValue(n);
+    return n;
   }
 
   // set选中值
@@ -346,7 +370,8 @@ class Picker extends React.Component {
         this.callback(this._triggerChangeWhenMount);
         this._triggerChangeWhenMount = null;
     }
-    this.setTransForm(this.getInitialStyle());
+    this.currentY = this.getStyle(this.selectedIndex);
+    this.setTransForm(this.currentY);
   }
 
   handleWrapperStart (e) {
@@ -354,9 +379,6 @@ class Picker extends React.Component {
   }
 
   render () {
-    // const style = {
-    //   transform: this.getInitialStyle()
-    // }
     return (
       <div className="ui-picker-wrapper" onTouchStart={this.handleWrapperStart.bind(this)}>
           <div className="ui-picker"
