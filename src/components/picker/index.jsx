@@ -117,21 +117,15 @@ class Picker extends React.Component {
     this.currentY += Math.round(value);
 
     // 正数y最大值
-    const max1 = this.halfCount * this.itemHeight;
+    const max = this.halfCount * this.itemHeight;
     // 负数y最小值
-    const max2 = (this.props.data.length - this.halfCount - 1) * this.itemHeight;
+    const min = -(this.props.data.length - this.halfCount - 1) * this.itemHeight;
 
-    if (this.currentY > max1) {
-      this.currentY = max1;
+    if (this.currentY > max) {
+      this.currentY = max;
     }
-    else if (this.currentY > 0 && this.currentY < max1) {
-      this.currentY = this.currentY;
-    }
-    else if (this.currentY === max1) {
-      this.currentY = this.currentY;
-    }
-    else if (Math.abs(this.currentY) > max2) {
-      this.currentY = - max2;
+    else if (this.currentY < min) {
+      this.currentY =  min;
     }
 
     this.countListIndex(this.currentY);
@@ -149,6 +143,7 @@ class Picker extends React.Component {
     const y = this.currentY + value;
     this.setTransForm(y);
   }
+  
 
   // 计算list数组索引
   countListIndex (pageY) {
