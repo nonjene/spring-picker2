@@ -117,7 +117,7 @@ class Picker extends React.Component {
 
     this[_id] = true;
 
-    const maxSpeed = 1;
+    const maxSpeed = 2;
     if(speed > maxSpeed){
       speed = maxSpeed;
     }
@@ -125,21 +125,24 @@ class Picker extends React.Component {
       speed = -maxSpeed;
     }
     
-    const g = 2;
+    const g = 5;
     const time = Math.abs(speed/g)*1000;
     const easeEndY = (speed*time/2 + _rawY);
     
+    if(time<1){
+      return cb(easeEndY);
+    }
+    //console.log(time);
     //console.log('start:'+_rawY,'end:'+easeEndY);
+    
     translate(_rawY, easeEndY, time, (y)=>{
       
       if(!this[_id]) return false;
 
-
-
       if(y>this.max){
-        this.setTransForm(y+(y-this.max)/6, 'ins');
+        this.setTransForm(y+Math.sqrt(y-this.max), 'ins');
       }else if( y<this.min){
-        this.setTransForm(y+(this.min-y)/6, 'ins');
+        this.setTransForm(y+Math.sqrt(this.min-y), 'ins');
       }else{
         this.setTransForm(y, 'ins');
       }
