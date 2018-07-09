@@ -99,10 +99,10 @@ class Picker extends React.Component {
     }
     this.endY = e.nativeEvent.changedTouches[0].pageY;
     // 实际滚动距离
-    let v = parseInt(this.endY - this.startY);
-    let value = v % this.itemHeight;
+    const v = +(this.endY - this.startY);
+    const value = Math.round(v / this.itemHeight) * this.itemHeight;
     // 计算出每次拖动的36px整倍数
-    this.currentY += (v - value);
+    this.currentY += Math.round(value);
 
     // 正数y最大值
     const max1 = this.halfCount * this.itemHeight;
