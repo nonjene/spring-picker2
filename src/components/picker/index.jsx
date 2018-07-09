@@ -107,7 +107,12 @@ class Picker extends React.Component {
   }
 
   stopEase(idPointer){
-    delete this[idPointer];
+    if(this[idPointer]){
+      delete this[idPointer];
+      if(this._easingY!==null){
+        this.currentY = this._easingY;
+      }
+    }
   }
   /**
    * 滑动结束后，设置缓动
@@ -167,10 +172,13 @@ class Picker extends React.Component {
 
     run((y)=>{
       if(!this[_pointerId]) return false;
-
+      this._easingY = y;
       this.setTransForm(y, 'ins');
       
-    }, y=>cb(y));
+    }, y=>{
+      this._easingY = null;
+      cb(y)
+    });
 
     return _pointerId;
   }
@@ -278,7 +286,7 @@ class Picker extends React.Component {
       return;
     }
     const pageY = e.changedTouches[0].pageY;
-    let value = parseInt(pageY - this.startY);
+    let value = +(pageY - this.startY);
     const y = this.currentY + value;
     
     this.updSpeed(y);
