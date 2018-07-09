@@ -135,7 +135,7 @@ export default class PickerDemo extends React.Component {
               selectedValue
             })}
             onChanging={(selectedValue, key, value, name)=>{
-              console.log(selectedValue, key, value, name)
+              //console.log(selectedValue, key, value, name)
             }}
           />
         </div>

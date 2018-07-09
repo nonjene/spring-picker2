@@ -17,7 +17,8 @@ const existValue = (val)=>!!~'number,string'.indexOf(typeof val);
 const defaultProps = {
   viewCount: 7
 }
-
+const reqAF = require('./reqAF');
+const {translate} = require("./translate");
 
 class Picker extends React.Component {
   constructor(props) {
@@ -32,6 +33,11 @@ class Picker extends React.Component {
     this.state = {style: {}};
     this.viewCount = props.viewCount % 2 ? props.viewCount : props.viewCount + 1;//要奇数
     this.halfCount = this.viewCount / 2 | 0;
+
+    // 正数y最大值
+    this.max = this.halfCount * this.itemHeight;
+    // 负数y最小值
+    this.min = -(this.props.data.length - this.halfCount - 1) * this.itemHeight;
   }
 
   // 初始化获得selectedIndex
@@ -59,7 +65,6 @@ class Picker extends React.Component {
     }
     return index;
   }
-
   componentWillReceiveProps(nextProps) {
     const isEqual = nextProps.selectedValue === this.props.selectedValue;
 
@@ -82,55 +87,122 @@ class Picker extends React.Component {
     return this.currentY;
   }
   setTransForm(y, type){
-    //todo: 改为scroll
     if(!this.dom) return;
+
     const val = `translate3d(0px, ${y}px, 0px)`;
-    (window.requestAnimationFrame || window.webkitRequestAnimationFrame)(()=>{
+    const run = ()=>{
       this.dom.style.webkitTransform = val;
       this.dom.style.transform = val;
-      if(type==='end'){
+      if(type === 'end'){
         this.dom.style.transition = '';
       }else{
         this.dom.style.transition = 'none';
       }
-    })
+    };
+    if(type === 'ins'){
+      run()
+    }else{
+      reqAF(run);
+    }
   }
 
+  stopEase(idPointer){
+    delete this[idPointer];
+  }
+  setEase(_rawY, cb){
+    let speed = this.endGetSpeed();
+    if(!speed) return cb(_rawY);
+
+    const _id = Math.random()*1e3|0;
+
+    this[_id] = true;
+
+    const maxSpeed = 1;
+    if(speed > maxSpeed){
+      speed = maxSpeed;
+    }
+    if(speed < -maxSpeed){
+      speed = -maxSpeed;
+    }
+    
+    const g = 2;
+    const time = Math.abs(speed/g)*1000;
+    const easeEndY = (speed*time/2 + _rawY);
+    
+    //console.log('start:'+_rawY,'end:'+easeEndY);
+    translate(_rawY, easeEndY, time, (y)=>{
+      
+      if(!this[_id]) return false;
+
+
+
+      if(y>this.max){
+        this.setTransForm(y+(y-this.max)/6, 'ins');
+      }else if( y<this.min){
+        this.setTransForm(y+(this.min-y)/6, 'ins');
+      }else{
+        this.setTransForm(y, 'ins');
+      }
+      
+    }, ()=>{
+      cb(easeEndY);
+    });
+  }
+
+  fixPos(rawY){
+    return Math.round(rawY / this.itemHeight) * this.itemHeight;  
+  }
+  fixEdgePos(_rawY){
+    if (_rawY > this.max) {
+      this.currentY = this.max;
+      return true;
+    }
+    else if (_rawY < this.min) {
+      this.currentY =  this.min;
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  handleTransEnd(){
+    this.countListIndex(this.currentY);
+    this.setTransForm(this.currentY, 'end');
+  }
   handleTouchStart (e) {
     e.preventDefault();
     if (this.props.data.length <= 1) {
       return;
     }
-    this.startY = e.nativeEvent.changedTouches[0].pageY;
+    this.startY = e.changedTouches[0].pageY;
+    this.stopEase(this._easeIDPointer);
   }
 
-  handleTouchEnd (e) {
+  handleTouchEnd(e) {
     e.preventDefault();
     if (this.props.data.length <= 1) {
       return;
     }
-    this.endY = e.nativeEvent.changedTouches[0].pageY;
+    this.endY = e.changedTouches[0].pageY;
     // 实际滚动距离
-    const v = +(this.endY - this.startY);
-    const value = Math.round(v / this.itemHeight) * this.itemHeight;
-    // 计算出每次拖动的36px整倍数
-    this.currentY += Math.round(value);
+    const _rawY = +(this.endY - this.startY) + this.currentY;
 
-    // 正数y最大值
-    const max = this.halfCount * this.itemHeight;
-    // 负数y最小值
-    const min = -(this.props.data.length - this.halfCount - 1) * this.itemHeight;
-
-    if (this.currentY > max) {
-      this.currentY = max;
+    
+    if(this.fixEdgePos(_rawY)){
+      this._resetSpeed();
+      this.handleTransEnd();
+      
+    }else{
+      this._easeIDPointer = this.setEase(_rawY, (easeEndY)=>{
+        if(!this.fixEdgePos(easeEndY)){
+          this.currentY = this.fixPos(easeEndY)
+        }
+        this.handleTransEnd();
+        
+      });
     }
-    else if (this.currentY < min) {
-      this.currentY =  min;
-    }
 
-    this.countListIndex(this.currentY);
-
-    this.setTransForm(this.currentY, 'end');
+  
   }
 
   handleTouchMove (e) {
@@ -138,12 +210,40 @@ class Picker extends React.Component {
     if (this.props.data.length <= 1) {
       return;
     }
-    const pageY = e.nativeEvent.changedTouches[0].pageY;
+    const pageY = e.changedTouches[0].pageY;
     let value = parseInt(pageY - this.startY);
     const y = this.currentY + value;
+    
+    this.updSpeed(y);
     this.setTransForm(y);
   }
-  
+  // speed
+  endGetSpeed(){
+    if(!this.nowT || this.lastT === this.nowT) return 0;
+
+    const speed = (this.nowY - this.lastY) / (this.nowT - this.lastT);
+    this._resetSpeed();
+
+    return speed;
+  }
+  _resetSpeed(){
+    this.lastT = this.nowT =  0;
+    this.lastY = this.nowY = 0;
+  }
+  updSpeed(y){
+    const nowT = Date.now();
+    const nowY = y;
+    /* move的触发间隔大于某个数，就当作触摸停顿了，不再计算速度 */
+    if(!this.lastT || (nowT - this.lastT)>50){
+      this.lastT = this.nowT =  nowT;
+      this.lastY = this.nowY = nowY;
+    }else{
+      this.lastT = this.nowT;
+      this.lastY = this.nowY;
+      this.nowT =  nowT;
+      this.nowY = nowY;
+    }
+  }
 
   // 计算list数组索引
   countListIndex (pageY) {
@@ -185,6 +285,16 @@ class Picker extends React.Component {
   }
 
   componentDidMount () {
+    /* onTouchStart={this.handleTouchStart.bind(this)}
+            onTouchMove={this.handleTouchMove.bind(this)}
+            onTouchEnd = {this.handleTouchEnd.bind(this)} */
+
+    if(this.dom){
+      this.dom.addEventListener('touchstart', this.handleTouchStart.bind(this));
+      this.dom.addEventListener('touchmove', this.handleTouchMove.bind(this), false);
+      this.dom.addEventListener('touchend', this.handleTouchEnd.bind(this), true);
+      this.dom.addEventListener('touchcancel', this.handleTouchEnd.bind(this));
+    }
     if(this._triggerChangeWhenMount){
         this.callback(this._triggerChangeWhenMount);
         this._triggerChangeWhenMount = null;
@@ -203,10 +313,7 @@ class Picker extends React.Component {
     return (
       <div className="ui-picker-wrapper" onTouchStart={this.handleWrapperStart.bind(this)}>
           <div className="ui-picker"
-            ref={dom=>this.dom = dom}
-            onTouchStart={this.handleTouchStart.bind(this)}
-            onTouchMove={this.handleTouchMove.bind(this)}
-            onTouchEnd = {this.handleTouchEnd.bind(this)}>
+            ref={dom=>this.dom = dom}>
             {
               this.props.data.map((item, index) => {
                 const displayValue = item.name;
