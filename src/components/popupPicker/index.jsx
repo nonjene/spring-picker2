@@ -61,7 +61,8 @@ class PopupPicker extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeValue: this.props.selectedValue
+      activeValue: this.props.selectedValue,
+      dataID: Math.random*1e3|0
     };
     this._activeValue = this.props.selectedValue;
     this._oriValue = this._activeValue;
@@ -86,7 +87,7 @@ class PopupPicker extends React.Component {
           newer = true;
         }
       });
-      newer && this.setState({ activeValue });
+      newer && this.setState({ activeValue, dataID: Math.random*1e3|0 });
     }
     
 
@@ -136,6 +137,7 @@ class PopupPicker extends React.Component {
             key={name}
             onChange={this.handleChange.bind(this, name)}
             data={this.props.data[name]}
+            dataID={this.state.dataID}
             selectedValue={this.state.activeValue[name]}
           />
         ))}

@@ -33,12 +33,14 @@ class Picker extends React.Component {
     this.viewCount = props.viewCount % 2 ? props.viewCount : props.viewCount + 1;//要奇数
     this.halfCount = this.viewCount / 2 | 0;
 
+    this.getEdge();
+  }
+  getEdge(){
     // 正数y最大值
     this.max = this.halfCount * this.itemHeight;
     // 负数y最小值
     this.min = -(this.props.data.length - this.halfCount - 1) * this.itemHeight;
   }
-
   // 初始化获得selectedIndex
   getInitialIndex() {
     let index;
@@ -66,13 +68,16 @@ class Picker extends React.Component {
   }
   componentWillReceiveProps(nextProps) {
     const isEqual = nextProps.selectedValue === this.props.selectedValue;
-
+    
     if (!isEqual) {
       this.selectedIndex = getIndex(nextProps.data, nextProps.selectedValue);
       if (this.selectedIndex === 0) {
         //这是干嘛的？
         this.setTransForm(this.itemHeight * this.halfCount);
       }
+    }
+    if(nextProps.dataID !== this.props.dataID){
+      this.getEdge();
     }
   }
 
@@ -112,7 +117,7 @@ class Picker extends React.Component {
 
       const oriPos = this.getStyle(i);
       const scale = 1 - Math.abs(oriPos-y)  / 8 / this.itemHeight;
-      console.log(scale);
+      //console.log(scale);
       //let origin;
       //let transY = this.itemHeight * (1 - Math.pow(scale, Math.abs(i-n)));
       // if(i<=n){
