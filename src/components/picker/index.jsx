@@ -109,52 +109,115 @@ class Picker extends React.Component {
   stopEase(idPointer){
     delete this[idPointer];
   }
+  /**
+   * 滑动结束后，设置缓动
+   * @param {number} _rawY  touchend后，滚动到的y位置
+   * @param {function} cb   完成后回调
+   */
   setEase(_rawY, cb){
-    let speed = this.endGetSpeed();
-    if(!speed) return cb(_rawY);
+    const _maxSpeed = 2;
+    let v0 = this.endGetSpeed();
+    if(!v0) return cb(_rawY);
 
-    const _id = Math.random()*1e3|0;
+    if(v0 > _maxSpeed) v0 = _maxSpeed;
+    else if(v0 < -_maxSpeed) v0 = -_maxSpeed;
 
-    this[_id] = true;
+    const _pointerId = '_ease_' + Math.random()*1e5|0;
+    this[_pointerId] = true;
 
-    const maxSpeed = 2;
-    if(speed > maxSpeed){
-      speed = maxSpeed;
-    }
-    if(speed < -maxSpeed){
-      speed = -maxSpeed;
-    }
-    
-    const g = 5;
-    const time = Math.abs(speed/g)*1000;
-    const easeEndY = (speed*time/2 + _rawY);
-    
-    if(time<1){
-      return cb(easeEndY);
-    }
-    //console.log(time);
-    //console.log('start:'+_rawY,'end:'+easeEndY);
-    
-    translate(_rawY, easeEndY, time, (y)=>{
+    const sym = v0 > 0 ? 1 : -1;
+    const frame = 1000 / 60, 
+          _oriG = sym * .008,
+          obs = _oriG + sym * .012;
+
+    let g = _oriG;
+    let t = 0;
+    let h0 = 0;
+    let _maxH; //最终结果的最大滑动距离
+    if(v0 > 0) _maxH = this.max - _rawY;
+    else _maxH = _rawY - this.min;
+
+    //console.log(v0);
+    //console.log('totalTime:'+Math.abs(v0 / g))
+ 
+    const run = (frameCb, done)=>{
+        reqAF(()=>{
+          t += frame;
+          const ht = v0 * t - g * t * t /2 + h0;
+          const vt = v0 - g * t;
+          //console.log(ht);
+          // 超过边界, 增加阻力
+          if(g !== obs && ht > _maxH){
+            g = obs;
+            v0 = vt;
+            t = 0;
+            h0 = ht;
+          }
+          // 到达顶点
+          if(vt * sym < 0 ){
+            return done(ht + _rawY);
+          }
+          
+          if(frameCb(ht + _rawY) === false){
+            return;
+          }
+          return run(frameCb, done);
+        })
+    };
+
+    run((y)=>{
+      if(!this[_pointerId]) return false;
+
+      this.setTransForm(y, 'ins');
       
-      if(!this[_id]) return false;
+    }, y=>cb(y));
 
-      if(y>this.max){
-        this.setTransForm(y+Math.sqrt(y-this.max), 'ins');
-      }else if( y<this.min){
-        this.setTransForm(y+Math.sqrt(this.min-y), 'ins');
-      }else{
-        this.setTransForm(y, 'ins');
-      }
-      
-    }, ()=>{
-      cb(easeEndY);
-    });
+    return _pointerId;
   }
+  // touchend后，获取最后的滑动速度
+  endGetSpeed(){
+    //if(!this.nowT || this.lastT === this.nowT) return 0;
 
+    //const speed = (this.nowY - this.lastY) / (this.nowT - this.lastT);
+    const s = this.lastScrollSpeed;
+    this._resetSpeed();
+    return s;
+
+  }
+  _resetSpeed(){
+    this.lastT = this.lastY = this.lastScrollSpeed = 0;
+  }
+  // 缓存 lastT lastY lastScrollSpeed。 暂设置lastScrollSpeed是之前综合的平均值
+  updSpeed(y){
+    const nowT = Date.now();
+    const nowY = y;
+    /* move的触发间隔大于某个数，就当作触摸停顿了，不再计算速度 */
+    if(!this.lastT || (nowT - this.lastT)>50){
+      this.lastT  = nowT;
+      this.lastY  = nowY;
+      this.lastScrollSpeed = 0;
+    }else{
+      const _lastS = this.lastScrollSpeed;
+      this.lastScrollSpeed = (nowY - this.lastY) / (nowT - this.lastT);
+      
+      if(_lastS){
+        this.lastScrollSpeed = (this.lastScrollSpeed+_lastS)/2;
+      }
+      this.lastT = nowT;
+      this.lastY = nowY;
+
+      
+    }
+  }
+  // 完成滚动后，修正滚动的位置到最近某个选项的y。
   fixPos(rawY){
     return Math.round(rawY / this.itemHeight) * this.itemHeight;  
   }
+  /**
+   * 当y超过范围，自动把this.currentY 修正到边缘值，修正后返回true，没则返回false
+   * @param {number} _rawY 
+   * @returns {boolean}
+   */
   fixEdgePos(_rawY){
     if (_rawY > this.max) {
       this.currentY = this.max;
@@ -168,6 +231,7 @@ class Picker extends React.Component {
     }
   }
 
+  // 滚动完后
   handleTransEnd(){
     this.countListIndex(this.currentY);
     this.setTransForm(this.currentY, 'end');
@@ -219,33 +283,6 @@ class Picker extends React.Component {
     
     this.updSpeed(y);
     this.setTransForm(y);
-  }
-  // speed
-  endGetSpeed(){
-    if(!this.nowT || this.lastT === this.nowT) return 0;
-
-    const speed = (this.nowY - this.lastY) / (this.nowT - this.lastT);
-    this._resetSpeed();
-
-    return speed;
-  }
-  _resetSpeed(){
-    this.lastT = this.nowT =  0;
-    this.lastY = this.nowY = 0;
-  }
-  updSpeed(y){
-    const nowT = Date.now();
-    const nowY = y;
-    /* move的触发间隔大于某个数，就当作触摸停顿了，不再计算速度 */
-    if(!this.lastT || (nowT - this.lastT)>50){
-      this.lastT = this.nowT =  nowT;
-      this.lastY = this.nowY = nowY;
-    }else{
-      this.lastT = this.nowT;
-      this.lastY = this.nowY;
-      this.nowT =  nowT;
-      this.nowY = nowY;
-    }
   }
 
   // 计算list数组索引
