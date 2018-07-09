@@ -81,8 +81,8 @@ class PopupPicker extends React.Component {
         if(!deepEqual(nextProps.data[name], this.props.data[name])){
           // 重置选项
           const val = (nextProps.data[name][0] || {}).value;
-          activeVal[name] = val;
-          _oriValue[name] = val;
+          activeValue[name] = val;
+          this._oriValue[name] = val;
           newer = true;
         }
       });
