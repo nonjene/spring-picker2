@@ -115,7 +115,7 @@ class Picker extends React.Component {
    * @param {function} cb   完成后回调
    */
   setEase(_rawY, cb){
-    const _maxSpeed = 2;
+    const _maxSpeed = 3;
     let v0 = this.endGetSpeed();
     if(!v0) return cb(_rawY);
 
@@ -127,8 +127,8 @@ class Picker extends React.Component {
 
     const sym = v0 > 0 ? 1 : -1;
     const frame = 1000 / 60, 
-          _oriG = sym * .008,
-          obs = _oriG + sym * .012;
+          _oriG = sym * .003,
+          obs = _oriG + sym * .01;
 
     let g = _oriG;
     let t = 0;
@@ -143,11 +143,11 @@ class Picker extends React.Component {
     const run = (frameCb, done)=>{
         reqAF(()=>{
           t += frame;
-          const ht = v0 * t - g * t * t /2 + h0;
+          const ht = (v0 - g * t / 2) * t + h0;
           const vt = v0 - g * t;
-          //console.log(ht);
+
           // 超过边界, 增加阻力
-          if(g !== obs && ht > _maxH){
+          if(g !== obs && Math.abs(ht) > _maxH){
             g = obs;
             v0 = vt;
             t = 0;
