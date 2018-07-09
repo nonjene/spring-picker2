@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+//import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
 const getIndex = (list, value) => {
@@ -18,7 +18,6 @@ const defaultProps = {
   viewCount: 7
 }
 const reqAF = require('./reqAF');
-const {translate} = require("./translate");
 
 class Picker extends React.Component {
   constructor(props) {
