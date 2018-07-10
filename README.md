@@ -2,9 +2,9 @@
 
 forked from [https://github.com/springalskey/picker](https://github.com/springalskey/picker)
 
-处理多处bug，更换了更清晰的数据格式，新增PopPicker组件，可以在点击完成后再触发change，其他情况则还原数据。
+优化了实现，更换了更清晰的数据格式，新增PopPicker组件，可以在点击完成后再触发change，其他情况则还原数据。
 
-更改幅度大，不提pr。
+
 
 ## How to use
 
