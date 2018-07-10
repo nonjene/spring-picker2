@@ -130,7 +130,7 @@ class Picker extends React.Component {
       //this.dom.childNodes[i].style.transform = `scale(${scale}) translate3d(0,${transY}px,0)`;
       this.dom.childNodes[i].style.transform = `scale(${scale})`;
       this.dom.childNodes[i].style.transformOrigin = i<=n ? 'bottom' : 'top';
-    }console.log('end')
+    }
   }
 
   stopEase(idPointer){
