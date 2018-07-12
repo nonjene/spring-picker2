@@ -116,7 +116,7 @@ class Picker extends React.Component {
       if(typeof this.dom.childNodes[i] === 'undefined') continue;
 
       const oriPos = this.getStyle(i);
-      const scale = 1 - Math.abs(oriPos-y)  / 8 / this.itemHeight;
+      const scale = 1 - Math.abs(oriPos-y)  / 16 / this.itemHeight;
       //console.log(scale);
       //let origin;
       //let transY = this.itemHeight * (1 - Math.pow(scale, Math.abs(i-n)));
