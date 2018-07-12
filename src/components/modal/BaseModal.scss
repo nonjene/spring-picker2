@@ -1,5 +1,5 @@
 
-$h: 296px;
+$h: $springWrapH + $titleH;
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -11,7 +11,7 @@ $h: 296px;
 
   .modal {
     position: fixed;
-    top: calc(100% - $h);
+    top: calc(100% - #{$h});
     left: 0;
     bottom: 0;
     right: 0;
@@ -31,9 +31,9 @@ $h: 296px;
 }
 
 .modal-transition-enter .modal {
-  @include transitionBottomToUpFn($h,calc(100% - $h));
+  @include transitionBottomToUpFn($h,calc(100% - #{$h}));
 }
 
 .modal-transition-exit .modal {
-  @include transitionUpToBottomFn($h,calc(100% - $h));
+  @include transitionUpToBottomFn($h,calc(100% - #{$h}));
 }

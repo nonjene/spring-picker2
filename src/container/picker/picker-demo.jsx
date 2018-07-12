@@ -137,6 +137,7 @@ export default class PickerDemo extends React.Component {
             onChanging={(selectedValue, key, value, name)=>{
               //console.log(selectedValue, key, value, name)
             }}
+            viewCount={5}
           />
         </div>
 

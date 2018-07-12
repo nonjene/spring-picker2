@@ -15,7 +15,7 @@ const getIndex = (list, value) => {
 
 const existValue = (val)=>!!~'number,string'.indexOf(typeof val);
 const defaultProps = {
-  viewCount: 7
+  viewCount: 5
 }
 const reqAF = require('./reqAF');
 

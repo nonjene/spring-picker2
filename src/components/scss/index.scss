@@ -1,3 +1,14 @@
+$titleH: 44px;
+
+$itemHeight: 36px;
+$viewCount:5;
+
+$springH: $itemHeight * $viewCount;
+// 选择器margin
+$springMarginH: ($itemHeight/2);
+// 选择器外框高度 = 选择器高度 + 上下margin
+$springWrapH: #{$springH + $springMarginH + $springMarginH };
+
 @import './animation.scss';
 @import '../modal/BaseModal.scss';
 @import '../picker/index.scss';

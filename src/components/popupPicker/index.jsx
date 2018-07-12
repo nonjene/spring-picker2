@@ -35,7 +35,8 @@ const propTypes = {
   // 是否在选择过程即时传递数据
   liveUpdate: PropTypes.bool,
   // 正在滑动选择
-  onChanging: PropTypes.func
+  onChanging: PropTypes.func,
+  viewCount: PropTypes.number
 };
 const defaultProps = {
   data: {},
@@ -139,6 +140,7 @@ class PopupPicker extends React.Component {
             data={this.props.data[name]}
             dataID={this.state.dataID}
             selectedValue={this.state.activeValue[name]}
+            viewCount={this.props.viewCount}
           />
         ))}
       </Popup>
