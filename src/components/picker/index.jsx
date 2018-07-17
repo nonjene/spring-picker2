@@ -320,6 +320,11 @@ class Picker extends React.Component {
     this.updSpeed(y);
     this.setTransForm(y);
   }
+  handleClickSelect(index){
+    console.log(index)
+    this.currentY = this.getStyle(index);
+    this.handleTransEnd();
+  }
 
   // 计算list数组索引
   countListIndex (pageY) {
@@ -392,7 +397,9 @@ class Picker extends React.Component {
               this.props.data.map((item, index) => {
                 const displayValue = item.name;
                 return <div key={index}
-                  className={ 'ui-picker-item ' + this.getSelectedClass(index)}>
+                  className={ 'ui-picker-item ' + this.getSelectedClass(index)}
+                  onClick={this.handleClickSelect.bind(this, index)}
+                >
                   {displayValue}
                 </div>
               })

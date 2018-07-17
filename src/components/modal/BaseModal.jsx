@@ -5,51 +5,74 @@ import PropTypes from 'prop-types';
 
 const propTypes = {
   visible: PropTypes.bool.isRequired,
-  onCancel: PropTypes.func,
-}
+  onCancel: PropTypes.func
+};
 
 class BaseModal extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+
+    this.handleClickOverlay = function(e) {
+      this.props.onCancel && this.props.onCancel();
+    }.bind(this);
+
+    this.handleClickModal = function(e) {
+      e.stopPropagation();
+    }.bind(this);
+  }
+  doUnBind() {
+    this.modalOverlay &&
+      this.modalOverlay.removeEventListener('click', this.handleClickOverlay, false);
+    this.modal &&
+      this.modal.removeEventListener('click', this.handleClickModal, false);
+  }
+  doBind() {
+    // 点击阴影背景时cancel() popup
+    this.modalOverlay.addEventListener('click', this.handleClickOverlay, false);
+    this.modal.addEventListener('click', this.handleClickModal, false);
+  }
+  componentDidUpdate(props, state) {}
+  componentDidMount() {
+    console.log('mount');
+    this.doBind();
+  }
+  componentWillUnmount() {
+    console.log('un');
+    this.doUnBind();
   }
 
-  componentDidUpdate () {
-    if (this.modalOverlay && !this.modalOverlay.onclick) {
-
-      // 点击阴影背景时cancel() popup
-      this.modalOverlay.onclick = (e) => {
-        e.stopPropagation();
-        this.props.onCancel && this.props.onCancel();
-      }
-
-      // 点击modal阻止默认行为
-      // 原理：react event listener中无法阻止原生事件，所以用原生事件来替代react事件
-      this.modal.onclick = (e) => e.stopPropagation();
-    }
-  }
-
-  render () {
-    let modal/*  = <span/> */;
-    //if (this.props.visible) {
-      modal = (
-        <div className="modal-overlay" 
-          ref={(modalOverlay) => { this.modalOverlay = modalOverlay;}}>
-          <div className="modal" ref={(modal) => { this.modal = modal;}}>
-            {this.props.children}
-          </div>
-        </div>
-      );
-    //}
+  render() {
     return (
-      <CSSTransition classNames="modal-transition" timeout={240} in={this.props.visible} unmountOnExit>
-         {modal}
-      </CSSTransition>
+      <div
+        className="modal-overlay"
+        ref={modalOverlay => {
+          this.modalOverlay = modalOverlay;
+        }}
+      >
+        <div
+          className="modal"
+          ref={modal => {
+            this.modal = modal;
+          }}
+        >
+          {this.props.children}
+        </div>
+      </div>
     );
   }
 }
 
 BaseModal.propTypes = propTypes;
 
-export default BaseModal;
-
-
+export default function(props) {
+  return (
+    <CSSTransition
+      classNames="modal-transition"
+      timeout={240}
+      in={props.visible}
+      unmountOnExit
+    >
+      <BaseModal {...props} />
+    </CSSTransition>
+  );
+}
