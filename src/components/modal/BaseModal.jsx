@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { CSSTransition } from 'react-transition-group';
 import PropTypes from 'prop-types';
 
@@ -12,48 +11,27 @@ class BaseModal extends React.Component {
   constructor(props) {
     super(props);
 
-    this.handleClickOverlay = function(e) {
-      this.props.onCancel && this.props.onCancel();
-    }.bind(this);
-
-    this.handleClickModal = function(e) {
-      e.stopPropagation();
-    }.bind(this);
   }
-  doUnBind() {
-    this.modalOverlay &&
-      this.modalOverlay.removeEventListener('click', this.handleClickOverlay, false);
-    this.modal &&
-      this.modal.removeEventListener('click', this.handleClickModal, false);
+  
+  //componentDidUpdate(props, state) {}
+  componentDidMount() {}
+  componentWillUnmount(){}
+  handleClickOverlay(){
+    this.props.onCancel && this.props.onCancel();
   }
-  doBind() {
-    // 点击阴影背景时cancel() popup
-    this.modalOverlay.addEventListener('click', this.handleClickOverlay, false);
-    this.modal.addEventListener('click', this.handleClickModal, false);
-  }
-  componentDidUpdate(props, state) {}
-  componentDidMount() {
-    console.log('mount');
-    this.doBind();
-  }
-  componentWillUnmount() {
-    console.log('un');
-    this.doUnBind();
+  handleClickModal(e){
+    e.stopPropagation();
   }
 
   render() {
     return (
       <div
         className="modal-overlay"
-        ref={modalOverlay => {
-          this.modalOverlay = modalOverlay;
-        }}
+        onClick={this.handleClickOverlay.bind(this)}
       >
         <div
           className="modal"
-          ref={modal => {
-            this.modal = modal;
-          }}
+          onClick={this.handleClickModal.bind(this)}
         >
           {this.props.children}
         </div>
