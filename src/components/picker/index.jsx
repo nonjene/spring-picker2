@@ -273,7 +273,7 @@ class Picker extends React.Component {
     this.setTransForm(this.currentY, 'end');
   }
   handleTouchStart (e) {
-    e.preventDefault();
+    //e.preventDefault();
     if (this.props.data.length <= 1) {
       return;
     }
@@ -282,7 +282,7 @@ class Picker extends React.Component {
   }
 
   handleTouchEnd(e) {
-    e.preventDefault();
+    //e.preventDefault();
     if (this.props.data.length <= 1) {
       return;
     }
@@ -321,7 +321,7 @@ class Picker extends React.Component {
     this.setTransForm(y);
   }
   handleClickSelect(index){
-    console.log(index)
+    //console.log(index);
     this.currentY = this.getStyle(index);
     this.handleTransEnd();
   }
@@ -370,12 +370,6 @@ class Picker extends React.Component {
             onTouchMove={this.handleTouchMove.bind(this)}
             onTouchEnd = {this.handleTouchEnd.bind(this)} */
 
-    if(this.dom){
-      this.dom.addEventListener('touchstart', this.handleTouchStart.bind(this));
-      this.dom.addEventListener('touchmove', this.handleTouchMove.bind(this), false);
-      this.dom.addEventListener('touchend', this.handleTouchEnd.bind(this), true);
-      this.dom.addEventListener('touchcancel', this.handleTouchEnd.bind(this));
-    }
     if(this._triggerChangeWhenMount){
         this.callback(this._triggerChangeWhenMount);
         this._triggerChangeWhenMount = null;
@@ -384,15 +378,17 @@ class Picker extends React.Component {
     this.setTransForm(this.currentY);
   }
 
-  handleWrapperStart (e) {
-    e.preventDefault();
-  }
 
   render () {
     return (
-      <div className="ui-picker-wrapper" onTouchStart={this.handleWrapperStart.bind(this)}>
+      <div className="ui-picker-wrapper" >
           <div className="ui-picker"
-            ref={dom=>this.dom = dom}>
+            ref={dom=>this.dom = dom}
+            onTouchStart={this.handleTouchStart.bind(this)}
+            onTouchMove={this.handleTouchMove.bind(this)}
+            onTouchEnd={this.handleTouchEnd.bind(this)}
+            onTouchCancel={this.handleTouchEnd.bind(this)}
+          >
             {
               this.props.data.map((item, index) => {
                 const displayValue = item.name;
