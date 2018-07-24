@@ -106,10 +106,10 @@ class Picker extends React.Component {
     }
 
     if (this.props.has3DEffect) {
-      this.set3DEffect(y);
+      this.set3DEffect(y, type);
     }
   }
-  set3DEffect(y) {
+  set3DEffect(y, type) {
     // item scale
     const n = this.countListIndex(y) | 0;
     const edgeCount = this.halfCount * 3;
@@ -134,14 +134,21 @@ class Picker extends React.Component {
 
       const scaleY = Math.pow(scale, 2.5);
       
+      if (type === 'end') {
+        domItem.style.transition = '';
+      } else {
+        domItem.style.transition = 'none';
+      }
+
       if(scaleY < 0.5){
         domItem.style.opacity = 0;
-      }else{
+      } else {
         domItem.style.opacity = 1;
         domItem.style.transform = `scale(${scale}, ${scaleY})`;
         domItem.style.transformOrigin = origin; //i <= n ? 'bottom' : 'top';
       }
       domItem.style.zIndex = n - Math.abs(i - n);
+      
     }
   }
 

@@ -24,7 +24,7 @@
     overflow:hidden;
     // background:#fff;
     position: relative;
-    //transition: transform-origin .2s ease;
+    transition: transform-origin,transform .3s ease-out;
   }
 
   .ui-picker-item-selected {
