@@ -112,27 +112,36 @@ class Picker extends React.Component {
   set3DEffect(y) {
     // item scale
     const n = this.countListIndex(y) | 0;
-    const scaleEndIndex = n + this.halfCount + 1;
-    //console.log(n)
-    for (let i = n - this.halfCount; i < scaleEndIndex; i++) {
+    const edgeCount = this.halfCount * 3;
+    const scaleEndIndex = n + edgeCount + 1;
+    //console.log('中间：'+n);
+    for (let i = n - edgeCount; i < scaleEndIndex; i++) {
       const domItem = this.dom.childNodes[i];
       if (typeof domItem === 'undefined') continue;
 
       const oriPos = this.getStyle(i);
-      const scale = 1 - Math.abs(oriPos - y) / 16 / this.itemHeight;
-      //console.log(scale);
-      //let origin;
-      //let transY = this.itemHeight * (1 - Math.pow(scale, Math.abs(i-n)));
-      // if(i<=n){
-      //   origin = `center ${transY*3}px`;
-      // }else{
-      //   origin = `center ${-transY}px`;
-      //   //transY = -transY;
-      // }
+      const offset = Math.abs(oriPos - y);
+      //const scale = 1 - offset / 16 / this.itemHeight;//old
+      const scale = Math.cos(offset / this.itemHeight / edgeCount);
+      let origin;
+      //console.log('offset:' + (offset / this.itemHeight));
+      if(i > n){
+        origin = `center ${(-offset + this.itemHeight/2)}px`;
+      }else{
+        origin = `center ${(offset + this.itemHeight/2)}px`;
+        
+      }
 
-      //this.dom.childNodes[i].style.transform = `scale(${scale}) translate3d(0,${transY}px,0)`;
-      domItem.style.transform = `scale(${scale})`;
-      domItem.style.transformOrigin = i <= n ? 'bottom' : 'top';
+      const scaleY = Math.pow(scale, 2.5);
+      
+      if(scaleY < 0.5){
+        domItem.style.opacity = 0;
+      }else{
+        domItem.style.opacity = 1;
+        domItem.style.transform = `scale(${scale}, ${scaleY})`;
+        domItem.style.transformOrigin = origin; //i <= n ? 'bottom' : 'top';
+      }
+      domItem.style.zIndex = n - Math.abs(i - n);
     }
   }
 
