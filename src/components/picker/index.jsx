@@ -71,10 +71,6 @@ class Picker extends React.Component {
     
     if (!isEqual) {
       this.selectedIndex = getIndex(nextProps.data, nextProps.selectedValue);
-      if (this.selectedIndex === 0) {
-        //这是干嘛的？
-        this.setTransForm(this.itemHeight * this.halfCount);
-      }
     }
     if(nextProps.dataID !== this.props.dataID){
       this.getEdge();
@@ -411,6 +407,8 @@ Picker.defaultProps = defaultProps;
 Picker.propTypes = {
   // 数据源
   data: PropTypes.array.isRequired,
+  // 数据源有更新，可以更换这个值，可避免重新对比data是否有更新
+  dataID: PropTypes.any,
   // 选中的value
   selectedValue: PropTypes.any,
   // 当停止滑动选中立即回调onchange方法
