@@ -2,7 +2,7 @@
 
 forked from [springalskey/picker](https://github.com/springalskey/picker)
 
-在原有的基础上优化了实现，更换了更清晰的数据格式，更好的交互体验。
+在原有的基础上优化了实现，更换了更清晰的数据格式，更好的交互体验。
 
 ## 特点
 

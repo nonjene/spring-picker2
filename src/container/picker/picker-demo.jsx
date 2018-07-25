@@ -48,6 +48,7 @@ export default class PickerDemo extends React.Component {
         data1:4,
         data2:5,
       },
+      cacheSelectedValue1:4
       // address: this.defaultAddress,
     };
 
@@ -71,13 +72,15 @@ export default class PickerDemo extends React.Component {
   }
 
   closeUserPicker () {
-    this.setState({userPickerVisible: false});
+    this.setState({
+      userPickerVisible: false,
+      selectedValue: {...this.state.selectedValue, data1:this.state.cacheSelectedValue1 }
+    });
   }
 
   cancelUserPicker () {
     this.setState({
       userPickerVisible: false,
-      selectedValue: {}
     });
   }
 
@@ -109,7 +112,7 @@ export default class PickerDemo extends React.Component {
     return (
       <div className = "picker-demo">
         <div className="item">
-          { JSON.stringify(PopupPicker.getName(userData,this.state.selectedValue)) }
+          已选择：{ JSON.stringify(PopupPicker.getName(userData,this.state.selectedValue)) }
         </div>
         <div className="single-picker">
           <Popup
@@ -118,7 +121,7 @@ export default class PickerDemo extends React.Component {
             visible={this.state.userPickerVisible}>
             <Picker
               onChange={(value)=>this.setState({
-                selectedValue:{...this.state.selectedValue, data1:value }
+                cacheSelectedValue1: value
               })}
               data={userData.data1}
               selectedValue={this.state.selectedValue.data1}
@@ -135,19 +138,10 @@ export default class PickerDemo extends React.Component {
               selectedValue
             })}
             onChanging={(selectedValue, key, value, name)=>{
-              //console.log(selectedValue, key, value, name)
+              console.log(selectedValue, key, value, name)
             }}
-            viewCount={5}
           />
         </div>
-
-        {/* <PickerAddress
-          defaultValue={this.state.address}
-          onCancel={this.cancelAddressPicker.bind(this)}
-          onConfirm={this.closeAddressPicker.bind(this)}
-          visible={this.state.addressPickerVisible}
-          onChange={this.handleChangeAddress.bind(this)}>
-        </PickerAddress> */}
 
         <div className="button-wrap">
           <button
