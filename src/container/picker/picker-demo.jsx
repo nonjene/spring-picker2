@@ -154,13 +154,13 @@ export default class PickerDemo extends React.Component {
             type="button"
             onClick={this.showUserPicker.bind(this)}
             className="btn button-primary">
-              单向选择
+              单项选择
           </button>
           <button
             type="button"
             onClick={this.showUserPicker2.bind(this)}
             className="btn button-primary">
-              单向选择2
+              多项选择
           </button>
         </div>
 

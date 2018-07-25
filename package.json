@@ -1,6 +1,6 @@
 {
   "name": "spring-picker2",
-  "version": "2.3.4",
+  "version": "2.3.5",
   "description": "react picker",
   "scripts": {
     "start": "cross-env NODE_ENV=dev webpack-dev-server --inline --progress",
@@ -65,7 +65,6 @@
   },
   "main": "lib/index.js",
   "style": "lib/style.css",
-  "author": "springalskey",
   "contributors": [
     "springalskey",
     "nonjene"
