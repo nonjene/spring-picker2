@@ -132,7 +132,7 @@ class Picker extends React.Component {
         
       }
 
-      const scaleY = Math.pow(scale, 2.5);
+      const scaleY = Math.pow(scale, 2.6);
       
       if (type === 'end') {
         domItem.style.transition = '';
@@ -140,7 +140,7 @@ class Picker extends React.Component {
         domItem.style.transition = 'none';
       }
 
-      if(scaleY < 0.5){
+      if(scaleY < 0.56){
         domItem.style.opacity = 0;
       } else {
         domItem.style.opacity = 1;
@@ -178,8 +178,8 @@ class Picker extends React.Component {
 
     const sym = v0 > 0 ? 1 : -1;
     const frame = 1000 / 60,
-      _oriG = sym * 0.003,
-      obs = _oriG + sym * 0.01;
+      _oriG = sym * 0.001, //spring阻力
+      obs = _oriG + sym * 0.025;//超过边界的阻力
 
     let g = _oriG;
     let t = 0;
