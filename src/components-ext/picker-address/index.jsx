@@ -1,18 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { PopupPicker } from '../../components';
-import { provins, citys, areas } from './address';
+//import { provins, citys, areas } from './address';
 import './index.scss';
+
+let provins=[], citys={}, areas={};
 
 const getProvinsList = () => {
   return provins.map((name, i) => ({ name, value: i }));
 };
 
 const getCitysList = provinName => {
+  if(!citys[provinName]) return [];
   return citys[provinName].map((name, i) => ({ name, value: i }));
 };
 
 const getAreasList = citysName => {
+  if(!areas[citysName]) return [];
   return areas[citysName].map((name, i) => ({ name, value: i }));
 };
 
@@ -21,7 +25,9 @@ const getProvNameByIndex = ind => {
 };
 
 const getCityNameByIndex = (provInd, cityInd) => {
-  return citys[getProvNameByIndex(provInd)][cityInd];
+  const citysList = citys[getProvNameByIndex(provInd)];
+  if(!citysList) return [];
+  return citysList[cityInd];
 };
 
 const getAreaNameByIndex = (provInd, cityInd, areaInd) => {
@@ -89,7 +95,9 @@ class PickerAddress extends React.Component {
     this.props.onCancel && this.props.onCancel();
   }
   componentWillReceiveProps(nexProps) {
-    
+    if(nexProps.visible){
+      this.loadAddrFile();
+    }
 
     // 选项更新
     if (
@@ -103,7 +111,24 @@ class PickerAddress extends React.Component {
       });
     }
   }
-
+  componentDidMount(){
+    if(this.props.visible){
+      this.loadAddrFile();
+    }
+  }
+  loadAddrFile(){
+    if(this._hasReqAddrFile) return;
+    this._hasReqAddrFile = true;
+    require.ensure([], ()=>{
+      const addr = require('./address');
+      provins=addr.provins;
+      citys=addr.citys;
+      areas=addr.areas;
+      this.setState({
+        loadAddr: true
+      })
+    })
+  }
   render() {
     const selected = this.state.selectedValue;
     const provList = getProvinsList();
