@@ -67,7 +67,7 @@ class Picker extends React.Component {
     return index;
   }
   componentWillReceiveProps(nextProps) {
-    const isEqual = nextProps.selectedValue === this.props.selectedValue;
+    const isEqual = nextProps.selectedValue === this.selectedValue;
 
     if (!isEqual) {
       this.selectedIndex = getIndex(nextProps.data, nextProps.selectedValue);
@@ -358,6 +358,7 @@ class Picker extends React.Component {
 
     const item = this.props.data[index];
     this.selectedIndex = index;
+    this.selectedValue = item.value;
 
     this.callback(item, type);
   }
