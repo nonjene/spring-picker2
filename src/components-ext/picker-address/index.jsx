@@ -35,7 +35,7 @@ const propTypes = {
   onChanging: PropTypes.func
 };
 const defaultProps = {
-  visible: false,
+  visible: false
 };
 
 class PickerAddress extends React.Component {
@@ -64,6 +64,10 @@ class PickerAddress extends React.Component {
 
   handleChanging(selectedValue, key, value, name) {
     console.log(selectedValue, key, value, name);
+    // this.setState({ selectedValue }, () => {
+    //   this.props.onChanging &&
+    //     this.props.onChanging(selectedValue, key, value, name);
+    // });
     let { prov, city, area } = selectedValue;
     switch (key) {
       case 'prov':
@@ -91,10 +95,7 @@ class PickerAddress extends React.Component {
     });
   }
   componentWillReceiveProps(nexProps) {
-    if (
-      this.props.visible !== nexProps.visible &&
-      nexProps.visible !== this.state.visible
-    ) {
+    if (nexProps.visible !== this.state.visible) {
       this.setState({
         visible: nexProps.visible
       });

@@ -106,7 +106,7 @@ class PopupPicker extends React.Component {
   }
 
   handleChange(key, value, name) {
-    //console.log('change:',key, value, name)
+    //console.log('change:', key, value, name)
     this._activeValue = {
       ...this._activeValue,
       [key]: value
@@ -127,7 +127,7 @@ class PopupPicker extends React.Component {
   }
 
   render() {
-    console.log('render:',this.state.activeValue);//todo: debug
+    //console.log('render:', this.state.activeValue);
     return (
       <Popup
         onCancel={this.handleCancel.bind(this)}
