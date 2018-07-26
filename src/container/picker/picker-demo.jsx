@@ -162,9 +162,13 @@ export default class PickerDemo extends React.Component {
         />
         <PickerAddress
           visible={this.state.showAddrPicker}
+          onCancel={()=>this.setState({
+            showAddrPicker:false,
+          })}
           onSelect={(oVal, oName)=>{
             this.setState({
-              selectedAddrName: oName
+              selectedAddrName: oName,
+              showAddrPicker:false,
             })
           }}
         />

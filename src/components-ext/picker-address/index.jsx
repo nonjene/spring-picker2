@@ -50,15 +50,11 @@ class PickerAddress extends React.Component {
           area: 0
         };
     this.state = {
-      visible: props.visible,
       selectedValue
     };
   }
 
   handleSelect(selectedValue, selectedName) {
-    this.setState({
-      visible: false
-    });
     this.props.onSelect(selectedValue, selectedName);
   }
 
@@ -90,16 +86,10 @@ class PickerAddress extends React.Component {
   }
 
   handleCancel() {
-    this.setState({ visible: false }, () => {
-      this.props.onCancel && this.props.onCancel();
-    });
+    this.props.onCancel && this.props.onCancel();
   }
   componentWillReceiveProps(nexProps) {
-    if (nexProps.visible !== this.state.visible) {
-      this.setState({
-        visible: nexProps.visible
-      });
-    }
+    
 
     // 选项更新
     if (
@@ -130,7 +120,7 @@ class PickerAddress extends React.Component {
             area: areaList
           }}
           selectedValue={selected}
-          visible={this.state.visible}
+          visible={this.props.visible}
           onCancel={this.handleCancel.bind(this)}
           onSelect={this.handleSelect.bind(this)}
           onChanging={this.handleChanging.bind(this)}

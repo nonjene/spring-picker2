@@ -291,7 +291,7 @@ class Picker extends React.Component {
     this.setTransForm(this.currentY, 'end');
   }
   handleTouchStart(e) {
-    //e.preventDefault();
+    e.preventDefault();
     if (this.props.data.length <= 1) {
       return;
     }
@@ -300,7 +300,7 @@ class Picker extends React.Component {
   }
 
   handleTouchEnd(e) {
-    //e.preventDefault();
+    //e.preventDefault();//会导致无法click
     if (this.props.data.length <= 1) {
       return;
     }
