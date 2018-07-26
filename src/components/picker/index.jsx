@@ -37,13 +37,13 @@ class Picker extends React.Component {
       props.viewCount % 2 ? props.viewCount : props.viewCount + 1; //要奇数
     this.halfCount = (this.viewCount / 2) | 0;
 
-    this.getEdge();
+    this.getEdge(props.data.length);
   }
-  getEdge() {
+  getEdge(dataLen) {
     // 正数y最大值
     this.max = this.halfCount * this.itemHeight;
     // 负数y最小值
-    this.min = -(this.props.data.length - this.halfCount - 1) * this.itemHeight;
+    this.min = -(dataLen - this.halfCount - 1) * this.itemHeight;
   }
   // 初始化获得selectedIndex
   getInitialIndex() {
@@ -73,8 +73,8 @@ class Picker extends React.Component {
       this.selectedIndex = getIndex(nextProps.data, nextProps.selectedValue);
       this.initPos();
     }
-    if (nextProps.dataID !== this.props.dataID) {
-      this.getEdge();
+    if (nextProps.data.length !== this.props.data.length) {
+      this.getEdge(nextProps.data.length);
     }
   }
 
@@ -427,8 +427,6 @@ Picker.defaultProps = defaultProps;
 Picker.propTypes = {
   // 数据源
   data: PropTypes.array.isRequired,
-  // 数据源有更新，可以更换这个值，可避免重新对比data是否有更新
-  dataID: PropTypes.any,
   // 选中的value
   selectedValue: PropTypes.any,
   // 当停止滑动选中立即回调onchange方法
