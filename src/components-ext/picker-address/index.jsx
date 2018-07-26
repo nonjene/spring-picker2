@@ -133,7 +133,6 @@ class PickerAddress extends React.Component {
   }
   render() {
     const selected = this.state.selectedValue;
-    console.log("render:",selected)
     const provList = getProvinsList();
     const cityList = getCitysList(getProvNameByIndex(selected.prov || 0));
     const areaList = getAreasList(
