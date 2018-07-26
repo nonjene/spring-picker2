@@ -5,7 +5,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=dev webpack-dev-server --inline --progress",
     "build": "rimraf build && cross-env NODE_ENV=production webpack -p --progress",
-    "build-js": "babel src/components --out-dir lib --source-maps --extensions .jsx,.js --copy-files",
+    "build-js": "babel src/components src/components-ext --out-dir lib --source-maps --extensions .jsx,.js --copy-files",
     "build-css": "node-sass src/components/scss/index.scss lib/style.css",
     "prepublish": "rimraf lib && npm run build-css && npm run build-js",
     "gh-pages": "node_modules/.bin/gh-pages -d build"
