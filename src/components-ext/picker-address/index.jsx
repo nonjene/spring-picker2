@@ -36,7 +36,6 @@ const propTypes = {
 };
 const defaultProps = {
   visible: false,
-  selectedValue: null
 };
 
 class PickerAddress extends React.Component {
