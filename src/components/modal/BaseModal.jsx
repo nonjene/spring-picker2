@@ -33,7 +33,11 @@ class BaseModal extends React.Component {
           return cache;
         }, {});
         //修改body style后会重置scroll，重新定位到原来的滚动位置
-        document.body.scrollTop = this._cacheBodyScroll;
+        //包含判断是否为0，0时也不进行重新定位，因为这种情况的话，开发者已经把body.height设置了100%
+        //这时候滚动位置不受style修改的影响
+        if(this._cacheBodyScroll){
+          document.body.scrollTop = this._cacheBodyScroll;
+        }
         
       }else{
         Object.keys(bodyFixSty).forEach(name=>{
