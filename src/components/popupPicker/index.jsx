@@ -63,7 +63,6 @@ class PopupPicker extends React.Component {
     super(props);
     this.state = {
       activeValue: this.props.selectedValue,
-      dataID: Math.random()*1e3|0
     };
     this._activeValue = this.props.selectedValue;
     this._oriValue = this._activeValue;
@@ -73,7 +72,7 @@ class PopupPicker extends React.Component {
     // 更新原始选择，
     if (isSelectValueChanged) {
       this.syncVal(nextProps.selectedValue);
-      
+
     }else{
       //选择没变化，但选项变化
       let newer = false;
@@ -88,13 +87,13 @@ class PopupPicker extends React.Component {
           newer = true;
         }
       });
-      newer && this.setState({ activeValue, dataID: Math.random()*1e3|0 });
+      newer && this.syncVal(activeValue);
     }
     
 
   }
   syncVal(val){
-    this._oriValue = val; // _oriValue 用于用户点取消后, 重置state.activeValue
+    this._oriValue = this._activeValue = val; // _oriValue 用于用户点取消后, 重置state.activeValue
     this.setState({ activeValue: val });
   }
   handleSelect() {
@@ -139,7 +138,6 @@ class PopupPicker extends React.Component {
             key={name}
             onChange={this.handleChange.bind(this, name)}
             data={this.props.data[name]}
-            dataID={this.state.dataID}
             selectedValue={this.state.activeValue[name]}
             viewCount={this.props.viewCount}
           />
