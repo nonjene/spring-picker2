@@ -141,7 +141,7 @@ export default class PickerDemo extends React.Component {
               })
             }
             data={userData.data1}
-            selectedValue={this.state.selectedValue.data1}
+            selectedValue={this.state.cacheSelectedValue1}
           />
         </Popup>
         <PopupPicker
