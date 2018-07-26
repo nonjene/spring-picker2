@@ -63,7 +63,7 @@ class PopupPicker extends React.Component {
     super(props);
     this.state = {
       activeValue: this.props.selectedValue,
-      dataID: Math.random*1e3|0
+      dataID: Math.random()*1e3|0
     };
     this._activeValue = this.props.selectedValue;
     this._oriValue = this._activeValue;
@@ -88,7 +88,7 @@ class PopupPicker extends React.Component {
           newer = true;
         }
       });
-      newer && this.setState({ activeValue, dataID: Math.random*1e3|0 });
+      newer && this.setState({ activeValue, dataID: Math.random()*1e3|0 });
     }
     
 
@@ -127,6 +127,7 @@ class PopupPicker extends React.Component {
   }
 
   render() {
+    console.log('render:',this.state.activeValue);//todo: debug
     return (
       <Popup
         onCancel={this.handleCancel.bind(this)}
