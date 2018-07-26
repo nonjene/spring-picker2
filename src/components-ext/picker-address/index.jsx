@@ -16,7 +16,9 @@ const getCitysList = provinName => {
 };
 
 const getAreasList = citysName => {
-  if(!areas[citysName]) return [];
+  if(!areas[citysName]) {
+    return [];
+  };
   return areas[citysName].map((name, i) => ({ name, value: i }));
 };
 
@@ -86,7 +88,7 @@ class PickerAddress extends React.Component {
       },
       () => {
         this.props.onChanging &&
-          this.props.onChanging(selectedValue, key, value, name);
+          this.props.onChanging(this.state.selectedValue, key, value, name);
       }
     );
   }
@@ -131,6 +133,7 @@ class PickerAddress extends React.Component {
   }
   render() {
     const selected = this.state.selectedValue;
+    console.log("render:",selected)
     const provList = getProvinsList();
     const cityList = getCitysList(getProvNameByIndex(selected.prov || 0));
     const areaList = getAreasList(
