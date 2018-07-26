@@ -71,6 +71,7 @@ class Picker extends React.Component {
 
     if (!isEqual) {
       this.selectedIndex = getIndex(nextProps.data, nextProps.selectedValue);
+      this.initPos();
     }
     if (nextProps.dataID !== this.props.dataID) {
       this.getEdge();
@@ -376,7 +377,10 @@ class Picker extends React.Component {
     }
     return '';
   }
-
+  initPos(){
+    this.currentY = this.getStyle(this.selectedIndex);
+    this.setTransForm(this.currentY);
+  }
   componentDidMount() {
     /* onTouchStart={this.handleTouchStart.bind(this)}
             onTouchMove={this.handleTouchMove.bind(this)}
@@ -386,8 +390,7 @@ class Picker extends React.Component {
       this.callback(this._triggerChangeWhenMount);
       this._triggerChangeWhenMount = null;
     }
-    this.currentY = this.getStyle(this.selectedIndex);
-    this.setTransForm(this.currentY);
+    this.initPos();
   }
 
   render() {
