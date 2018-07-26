@@ -10,6 +10,7 @@ forked from [springalskey/picker](https://github.com/springalskey/picker)
  * 更合理的用户交互
  * 支持多级联动，选项动态更新
  * 灵活的选项配置
+ * 兼容ios的背景滚动问题
 
 ## demo预览
 
@@ -18,7 +19,7 @@ Chrome打开开发者工具，切换到手机模拟器预览
 
 
 手机二维码扫描预览
-![image]()
+![image](https://nonjene.github.io/demo/spring-picker2/qrcode.png)
 
 
 ## 如何使用
@@ -81,3 +82,34 @@ render(){
 
 ```
 
+## API
+
+### PopupPicker
+
+| props | type | default value | description |
+|--|--| -- | -- |
+| visible | bool | `false` | 是否显示组件 |
+| data | object | `{}` | 选项列表数据，数据结构参考上面的例子 |
+| selectedValue | object | `{}` | 已选择的值 |
+| liveUpdate | bool | `false` | 用户滑动到某个位置时，是否立即是更新为选中☑️的值，并通过onSelect传递出去 |
+| viewCount | number | `5` | 每列选项中可显示的行数。建议不要改，没有完全自动兼容UI。修改的话，请拷贝`src/components/scss/index.scss`到自己的项目，并修改里面的`$viewCount`变量。 |
+| onSelect | func | `undefined` | 用户点击`确定`时触发，传递两个参数：`(selectedValue, selectedName)` |
+| onCancel | func | `undefined` | 用户点击`取消`时触发，无参数传递 |
+| onChanging | func | `undefined` | 用户正在滑动或选择时触发 |
+
+### Popup
+
+| props | type | default value | description |
+|--|--| --| -- |
+| visible | boolean | 必填 | 是否显示组件 |
+| onConfirm | func | 必填 | 用户点击`确定`时触发 |
+| onCancel | func | 必填 | 用户点击`取消`时触发 |
+
+### Picker
+
+| props | type | default value | description |
+|--|--| --| -- |
+| data | object | `{}` | 选项列表数据，数据结构参考上面的例子 |
+| selectedValue | object | `{}` | 已选择的值 |
+| onChange |  func | `undefined` | 用户正在或选择时触发 |
+| viewCount | number | `5`  | 同PopupPicker 的 viewCount |
