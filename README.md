@@ -1,4 +1,4 @@
-## 移动端react选择器，支持拓展二级联动，三级联动
+## 移动端react选择器，支持多级联动
 
 forked from [springalskey/picker](https://github.com/springalskey/picker)
 
@@ -6,7 +6,7 @@ forked from [springalskey/picker](https://github.com/springalskey/picker)
 
 ## 特点
 
- * ios的滚轮UI风格
+ * 真实的3D滚轮，效果更接近原生，秒杀其它大多数picker组件🙃
  * 更合理的用户交互
  * 支持多级联动，选项动态更新
  * 灵活的选项配置
@@ -14,11 +14,14 @@ forked from [springalskey/picker](https://github.com/springalskey/picker)
 
 ## demo预览
 
+![image](https://nonjene.github.io/demo/spring-picker2/out.gif)
+
 Chrome打开开发者工具，切换到手机模拟器预览  
-[https://nonjene.github.io/demo/spring-picker2/index.html](https://nonjene.github.io/demo/spring-picker2/index.html)
+[demo](https://nonjene.github.io/demo/spring-picker2/index.html)
 
 
 手机二维码扫描预览
+
 ![image](https://nonjene.github.io/demo/spring-picker2/qrcode.png)
 
 
@@ -55,11 +58,10 @@ render(){
   <PopupPicker 
     data={this.data} 
     selectedValue={this.state.selected}
-    visible={this.state.userPickerVisible2}
-    liveUpdate={false}
-    onCancel={()=>this.setState({ userPickerVisible2: false })}
+    visible={this.state.visible2}
+    onCancel={()=>this.setState({ visible2: false })}
     onSelect={selectedValue=>this.setState({
-      userPickerVisible2:false,
+      visible2: false,
       selectedValue
     })}
     onChanging={(selectedValue, key, value, name)=>{
